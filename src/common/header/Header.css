@@ -40,6 +40,23 @@
     margin-right: 5px;
 }
 
+.login-signup-tabs {
+    margin-bottom: 20px;
+}
+
+.display-none {
+    display: none;
+}
+
+.display-block {
+    display: block;
+}
+
+#modal-login-btn,
+#modal-signup-btn {
+    margin-top: 20px;
+}
+
 @media screen and (max-width: 600px) {
 
     .app-header {
