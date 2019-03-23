@@ -1,0 +1,41 @@
+.app-header {
+    background-color: #253238;
+    height: 60px;
+    position: relative;
+}
+
+#fast-food-icon {
+    color: white;
+    margin-left: 16px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.search-box {
+    width: 250px;
+    margin: auto;
+    top: 50%;
+    transform: translateY(40%);
+}
+
+#search-box-icon {
+    color: white;
+    margin-bottom: 6px;
+}
+
+#search-box-input {
+    color: rgb(255, 255, 255);
+    width: 250px;
+}
+
+.app-login {
+    float: right;
+    margin-right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#login-btn-icon {
+    margin-right: 5px;
+}
