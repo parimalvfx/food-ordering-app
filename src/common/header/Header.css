@@ -39,3 +39,29 @@
 #login-btn-icon {
     margin-right: 5px;
 }
+
+@media screen and (max-width: 600px) {
+
+    .app-header {
+        display: block;
+        height: auto;
+        padding-bottom: 16px;
+    }
+
+    #fast-food-icon {
+        margin: 13px 0 0 16px;
+        position: unset;
+        transform: none;
+    }
+
+    .search-box {
+        margin: 16px 0 0 16px;
+        transform: none;
+    }
+
+    .app-login {
+        float: none;
+        margin: 16px 0 0 16px;
+        transform: none;
+    }
+}
