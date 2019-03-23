@@ -15,6 +15,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import PropTypes from 'prop-types';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const loginModalStyle = {
     content: {
@@ -64,11 +65,13 @@ class Header extends Component {
             emailRequired: 'display-none',
             email: '',
             signupPasswordRequired: 'display-none',
-            passwordRequired: '',
+            signupPassword: '',
             signupContactNoRequired: 'display-none',
             signupContactNo: '',
             signupSuccess: false,
             loggedIn: sessionStorage.getItem('access-token') == null ? false : true,
+            userFirstName: '',
+            openLoginMessage: false,
         }
     }
 
@@ -86,7 +89,7 @@ class Header extends Component {
             emailRequired: 'display-none',
             email: '',
             signupPasswordRequired: 'display-none',
-            passwordRequired: '',
+            signupPassword: '',
             signupContactNoRequired: 'display-none',
             signupContactNo: '',
         });
@@ -109,9 +112,39 @@ class Header extends Component {
     }
 
     loginClickHandler = () => {
+        this.state.loginContactNo === '' ? this.setState({loginContactNoRequired: 'display-block'}) : this.setState({loginContactNoRequired: 'display-none'});
+        this.state.loginPassword === '' ? this.setState({loginPasswordRequired: 'display-block'}) : this.setState({loginPasswordRequired: 'display-none'});
+
+        let dataLogin = null;
+        let xhrLogin = new XMLHttpRequest();
+        let that = this;
+        xhrLogin.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                let responseText = JSON.parse(this.responseText)
+                sessionStorage.setItem('user-uuid', responseText.id);
+                sessionStorage.setItem('access-token', xhrLogin.getResponseHeader('access-token'));
+
+                that.setState({
+                    loggedIn: true,
+                    userFirstName: responseText.first_name,
+                    openLoginMessage: true,
+                });
+
+                that.closeLoginModalHandler();
+            }
+        });
+
+        console.log(this.state.loginContactNo);
+        console.log(this.state.loginPassword);
+        console.log(window.btoa(this.state.loginContactNo + ':' + this.state.loginPassword));
+        xhrLogin.open('POST', 'http://localhost:8080/api/customer/login');
+        xhrLogin.setRequestHeader('authorization', 'Basic ' + window.btoa(this.state.loginContactNo + ':' + this.state.loginPassword));
+        xhrLogin.setRequestHeader('Content-Type', 'application/json');
+        xhrLogin.send(dataLogin);
     }
 
     inputFirstNameChangeHandler = (event) => {
+        console.log(event.target.value);
         this.setState({firstName: event.target.value});
     }
 
@@ -132,6 +165,18 @@ class Header extends Component {
     }
 
     singupClickHandler = () => {
+        this.state.firstName === '' ? this.setState({firstNameRequired: 'display-block'}) : this.setState({firstNameRequired: 'display-none'});
+        this.state.email === '' ? this.setState({emailRequired: 'display-block'}) : this.setState({emailRequired: 'display-block'});
+        this.state.signupPassword === '' ? this.setState({signupPasswordRequired: 'display-block'}) : this.setState({signupPasswordRequired: 'display-none'});
+        this.state.signupContactNo === '' ? this.setState({signupContactNoRequired: 'display-block'}): this.setState({signupContactNoRequired: 'display-none'});
+    }
+
+    loginMessageOnCloseHandler = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({openLoginMessage: false});
     }
 
     render() {
@@ -194,21 +239,34 @@ class Header extends Component {
                             {/* login contanct no */}
                             <FormControl required>
                                 <InputLabel htmlFor='loginContactNo'>Contact No.</InputLabel>
-                                <Input id='loginContactNo' type='text' logincontactno={this.state.loginContactNo} onChange={this.state.inputLoginContactNoChangeHandler} />
-                                <FormHelperText className={this.state.loginContactNoRequired}>
-                                    <span className='red'>required</span>
+                                <Input
+                                    id='loginContactNo'
+                                    type='text'
+                                    logincontactno={this.state.loginContactNo}
+                                    onChange={this.inputLoginContactNoChangeHandler}
+                                />
+                                <FormHelperText className={this.state.loginContactNoRequired} error={true}>
+                                    <span>required</span>
                                 </FormHelperText>
                             </FormControl>
                             <br /><br />
 
                             {/* login password */}
-                            <FormControl required>
-                                <InputLabel htmlFor='loginPassword'>Password</InputLabel>
-                                <Input id='loginPassword' type='password' loginpassword={this.state.loginPassword} onChange={this.state.inputLoginPasswordChangeHandler} />
-                                <FormHelperText className={this.state.loginPasswordRequired}>
-                                    <span className='red'>required</span>
-                                </FormHelperText>
-                            </FormControl>
+                            {/* form is used to overcome - [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) */}
+                            <form>
+                                <FormControl required>
+                                    <InputLabel htmlFor='loginPassword'>Password</InputLabel>
+                                    <Input
+                                        id='loginPassword'
+                                        type='password'
+                                        loginpassword={this.state.loginPassword}
+                                        onChange={this.inputLoginPasswordChangeHandler}
+                                    />
+                                    <FormHelperText className={this.state.loginPasswordRequired} error={true}>
+                                        <span>required</span>
+                                    </FormHelperText>
+                                </FormControl>
+                            </form>
                             <br /><br />
 
                             <Button id='modal-login-btn' variant='contained' color='primary' onClick={this.loginClickHandler}>LOGIN</Button>
@@ -222,9 +280,14 @@ class Header extends Component {
                             {/* signup first name */}
                             <FormControl required>
                                 <InputLabel htmlFor='firstName'>First Name</InputLabel>
-                                <Input id='firstName' type='text' firstname={this.state.firstName} onChange={this.state.inputFirstNameChangeHandler} />
-                                <FormHelperText className={this.state.firstNameRequired}>
-                                    <span className='red'>required</span>
+                                <Input
+                                    id='firstName'
+                                    type='text'
+                                    firstname={this.state.firstName}
+                                    onChange={this.inputFirstNameChangeHandler}
+                                />
+                                <FormHelperText className={this.state.firstNameRequired} error={true}>
+                                    <span>required</span>
                                 </FormHelperText>
                             </FormControl>
                             <br /><br />
@@ -232,36 +295,59 @@ class Header extends Component {
                             {/* signup last name */}
                             <FormControl>
                                 <InputLabel htmlFor='lastName'>Last Name</InputLabel>
-                                <Input id='lastName' type='text' lastname={this.state.lastName} onChange={this.inputLastNameChangeHandler} />
+                                <Input
+                                    id='lastName'
+                                    type='text'
+                                    lastname={this.state.lastName}
+                                    onChange={this.inputLastNameChangeHandler}
+                                />
                             </FormControl>
                             <br /><br />
 
                             {/* signup email */}
                             <FormControl required>
                                 <InputLabel htmlFor='email'>Email</InputLabel>
-                                <Input id='email' type='text' email={this.state.email} onChange={this.inputEmailChangeHandler} />
-                                <FormHelperText className={this.state.emailRequired}>
-                                    <span className='red'>required</span>
+                                <Input
+                                    id='email'
+                                    type='text'
+                                    email={this.state.email}
+                                    onChange={this.inputEmailChangeHandler}
+                                />
+                                <FormHelperText className={this.state.emailRequired} error={true}>
+                                    <span>required</span>
                                 </FormHelperText>
                             </FormControl>
                             <br /><br />
 
                             {/* signup password */}
-                            <FormControl required>
-                                <InputLabel htmlFor='signupPassword'>Password</InputLabel>
-                                <Input id='signupPassword' type='password' signupPassword={this.state.signupPassword} onChange={this.inputSignupPasswordChangeHandler} />
-                                <FormHelperText className={this.state.signupPasswordRequired}>
-                                    <span className='red'>required</span>
-                                </FormHelperText>
-                            </FormControl>
+                            {/* form is used to overcome - [DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) */}
+                            <form>
+                                <FormControl required>
+                                    <InputLabel htmlFor='signupPassword'>Password</InputLabel>
+                                    <Input
+                                        id='signupPassword'
+                                        type='password'
+                                        signuppassword={this.state.signupPassword}
+                                        onChange={this.inputSignupPasswordChangeHandler}
+                                    />
+                                    <FormHelperText className={this.state.signupPasswordRequired} error={true}>
+                                        <span>required</span>
+                                    </FormHelperText>
+                                </FormControl>
+                            </form>
                             <br /><br />
 
                             {/* signup contact no */}
                             <FormControl required>
                                 <InputLabel htmlFor='signupContactNo'>Contact No</InputLabel>
-                                <Input id='signupContactNo' type='text' signupContactNo={this.state.signupContactNo} onChange={this.inputSignupContactNoChangeHandler} />
-                                <FormHelperText className={this.state.signupContactNoRequired}>
-                                    <span className='red'>required</span>
+                                <Input
+                                    id='signupContactNo'
+                                    type='text'
+                                    signupcontactno={this.state.signupContactNo}
+                                    onChange={this.inputSignupContactNoChangeHandler}
+                                />
+                                <FormHelperText className={this.state.signupContactNoRequired} error={true}>
+                                    <span>required</span>
                                 </FormHelperText>
                             </FormControl>
                             <br /><br />
@@ -270,6 +356,21 @@ class Header extends Component {
                         </TabContainer>
                     }
                 </Modal>
+
+                {/* login snackbar */}
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    open={this.state.openLoginMessage}
+                    autoHideDuration={6000}
+                    onClose={this.loginMessageOnCloseHandler}
+                    ContentProps={{
+                        'aria-describedby': 'message-d',
+                    }}
+                    message={<span id='message-id'>Logged in successfully!</span>}
+                />
             </div>
         )
     }
