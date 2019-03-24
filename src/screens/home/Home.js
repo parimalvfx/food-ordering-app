@@ -6,18 +6,22 @@ import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import '../../assets/font-awesome-4.7.0/css/font-awesome.min.css'
 
 const styles = theme => ({
     restaurantCard: {
-        maxWidth: 260,
-        maxHeight: 310,
+        maxWidth: 250,
+        maxHeight: 300,
         marginTop: 15,
         marginBottom: 10,
         marginLeft: 25,
-        paddingBottom: 20
+        paddingBottom: 15,
     },
     restaurantCardMedia: {
         height: 140
+    },
+    restaurantName: {
+        marginBottom: 20,
     },
     restaurantCategories: {
         marginBottom: 25,
@@ -50,7 +54,7 @@ class Home extends Component {
                         title='placeholder'
                     />
                     <CardContent>
-                        <Typography gutterBottom variant='h5' component='h2'>
+                        <Typography className={classes.restaurantName} gutterBottom variant='h5' component='h2'>
                             3 Wise Monkeys
                         </Typography>
 
@@ -60,12 +64,12 @@ class Home extends Component {
 
                         <div className={classes.restaurantRating}>
                             <Typography className={classes.ratingText} variant='body2'>
-                                4.9 (28)
+                                <i class="fa fa-star"></i> 4.9 (28)
                             </Typography>
                         </div>
 
                         <Typography className={classes.restaurantAvgRate} variant='body2'>
-                            1100 for two
+                            <i class="fa fa-inr"></i>1100 for two
                         </Typography>
 
                     </CardContent>
