@@ -167,7 +167,7 @@ class Header extends Component {
         xhrLogin.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 let responseText = JSON.parse(this.responseText);
-                console.log(responseText);
+
                 if (responseText.code === 'ATH-001' || responseText.code === 'ATH-002') {
                     that.setState({
                         loginPasswordRequired: 'display-block',
@@ -196,7 +196,6 @@ class Header extends Component {
     }
 
     inputFirstNameChangeHandler = (event) => {
-        console.log(event.target.value);
         this.setState({ firstName: event.target.value });
     }
 
@@ -301,7 +300,7 @@ class Header extends Component {
         xhrSignup.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 let responseText = JSON.parse(this.responseText);
-                console.log(responseText);
+
                 if (responseText.code === 'SGR-001') {
                     that.setState({
                         signupContactNoRequired: 'display-block',
@@ -318,7 +317,6 @@ class Header extends Component {
         })
         xhrSignup.open('POST', 'http://localhost:8080/api/customer/signup');
         xhrSignup.setRequestHeader('Content-Type', 'application/json');
-        console.log(JSON.stringify(dataSignup));
         xhrSignup.send(JSON.stringify(dataSignup));
     }
 
