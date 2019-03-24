@@ -56,8 +56,10 @@ class Header extends Component {
             modalIsOpen: false,
             value: 0,
             loginContactNoRequired: 'display-none',
+            loginContactNoRequiredMsg: 'required',
             loginContactNo: '',
             loginPasswordRequired: 'display-none',
+            loginPasswordRequiredMsg: 'required',
             loginPassword: '',
             firstNameRequired: 'display-none',
             firstName: '',
@@ -80,8 +82,10 @@ class Header extends Component {
             modalIsOpen: true,
             value: 0,
             loginContactNoRequired: 'display-none',
+            loginContactNoRequiredMsg: 'required',
             loginContactNo: '',
             loginPasswordRequired: 'display-none',
+            loginPasswordRequiredMsg: 'required',
             loginPassword: '',
             firstNameRequired: 'display-none',
             firstName: '',
@@ -112,8 +116,40 @@ class Header extends Component {
     }
 
     loginClickHandler = () => {
-        this.state.loginContactNo === '' ? this.setState({loginContactNoRequired: 'display-block'}) : this.setState({loginContactNoRequired: 'display-none'});
-        this.state.loginPassword === '' ? this.setState({loginPasswordRequired: 'display-block'}) : this.setState({loginPasswordRequired: 'display-none'});
+        let contactRquired = false;
+        if (this.state.loginContactNo === '') {
+            this.setState({
+                loginContactNoRequired: 'display-block',
+                loginContactNoRequiredMsg: 'required'
+            });
+            contactRquired = true;
+        } else {
+            this.setState({loginContactNoRequired: 'display-none'});
+        }
+
+        let passwordRequired = false;
+        if (this.state.loginPassword === '') {
+            this.setState({
+                loginPasswordRequired: 'display-block',
+                loginPasswordRequiredMsg: 'required'
+            });
+            passwordRequired = true;
+        } else {
+            this.setState({loginPasswordRequired: 'display-none'});
+        }
+
+        let validateContact = new RegExp('^[0][1-9]{9}$|^[1-9]{9}');
+        if (contactRquired === false && validateContact.test(this.state.loginContactNo) === false) {
+            this.setState({
+                loginContactNoRequired: 'display-block',
+                loginContactNoRequiredMsg: 'Invalid Contact',
+            });
+            return;
+        }
+
+        if (contactRquired || passwordRequired) {
+            return;
+        }
 
         let dataLogin = null;
         let xhrLogin = new XMLHttpRequest();
@@ -121,6 +157,15 @@ class Header extends Component {
         xhrLogin.addEventListener('readystatechange', function() {
             if (this.readyState === 4) {
                 let responseText = JSON.parse(this.responseText)
+                console.log(responseText);
+                if (responseText.code === 'ATH-001' || responseText.code === 'ATH-002') {
+                    that.setState({
+                        loginPasswordRequired: 'display-block',
+                        loginPasswordRequiredMsg: responseText.message,
+                    });
+                    return;
+                }
+
                 sessionStorage.setItem('user-uuid', responseText.id);
                 sessionStorage.setItem('access-token', xhrLogin.getResponseHeader('access-token'));
 
@@ -134,9 +179,6 @@ class Header extends Component {
             }
         });
 
-        console.log(this.state.loginContactNo);
-        console.log(this.state.loginPassword);
-        console.log(window.btoa(this.state.loginContactNo + ':' + this.state.loginPassword));
         xhrLogin.open('POST', 'http://localhost:8080/api/customer/login');
         xhrLogin.setRequestHeader('authorization', 'Basic ' + window.btoa(this.state.loginContactNo + ':' + this.state.loginPassword));
         xhrLogin.setRequestHeader('Content-Type', 'application/json');
@@ -166,7 +208,7 @@ class Header extends Component {
 
     singupClickHandler = () => {
         this.state.firstName === '' ? this.setState({firstNameRequired: 'display-block'}) : this.setState({firstNameRequired: 'display-none'});
-        this.state.email === '' ? this.setState({emailRequired: 'display-block'}) : this.setState({emailRequired: 'display-block'});
+        this.state.email === '' ? this.setState({emailRequired: 'display-block'}) : this.setState({emailRequired: 'display-none'});
         this.state.signupPassword === '' ? this.setState({signupPasswordRequired: 'display-block'}) : this.setState({signupPasswordRequired: 'display-none'});
         this.state.signupContactNo === '' ? this.setState({signupContactNoRequired: 'display-block'}): this.setState({signupContactNoRequired: 'display-none'});
     }
@@ -243,10 +285,11 @@ class Header extends Component {
                                     id='loginContactNo'
                                     type='text'
                                     logincontactno={this.state.loginContactNo}
+                                    value={this.state.loginContactNo}
                                     onChange={this.inputLoginContactNoChangeHandler}
                                 />
                                 <FormHelperText className={this.state.loginContactNoRequired} error={true}>
-                                    <span>required</span>
+                                    <span>{this.state.loginContactNoRequiredMsg}</span>
                                 </FormHelperText>
                             </FormControl>
                             <br /><br />
@@ -260,10 +303,11 @@ class Header extends Component {
                                         id='loginPassword'
                                         type='password'
                                         loginpassword={this.state.loginPassword}
+                                        value={this.state.loginPassword}
                                         onChange={this.inputLoginPasswordChangeHandler}
                                     />
                                     <FormHelperText className={this.state.loginPasswordRequired} error={true}>
-                                        <span>required</span>
+                                        <span>{this.state.loginPasswordRequiredMsg}</span>
                                     </FormHelperText>
                                 </FormControl>
                             </form>
@@ -284,6 +328,7 @@ class Header extends Component {
                                     id='firstName'
                                     type='text'
                                     firstname={this.state.firstName}
+                                    value={this.state.firstName}
                                     onChange={this.inputFirstNameChangeHandler}
                                 />
                                 <FormHelperText className={this.state.firstNameRequired} error={true}>
@@ -299,6 +344,7 @@ class Header extends Component {
                                     id='lastName'
                                     type='text'
                                     lastname={this.state.lastName}
+                                    value={this.state.lastName}
                                     onChange={this.inputLastNameChangeHandler}
                                 />
                             </FormControl>
@@ -311,6 +357,7 @@ class Header extends Component {
                                     id='email'
                                     type='text'
                                     email={this.state.email}
+                                    value={this.state.email}
                                     onChange={this.inputEmailChangeHandler}
                                 />
                                 <FormHelperText className={this.state.emailRequired} error={true}>
@@ -328,6 +375,7 @@ class Header extends Component {
                                         id='signupPassword'
                                         type='password'
                                         signuppassword={this.state.signupPassword}
+                                        value={this.state.signupPassword}
                                         onChange={this.inputSignupPasswordChangeHandler}
                                     />
                                     <FormHelperText className={this.state.signupPasswordRequired} error={true}>
@@ -335,7 +383,7 @@ class Header extends Component {
                                     </FormHelperText>
                                 </FormControl>
                             </form>
-                            <br /><br />
+                            <br />
 
                             {/* signup contact no */}
                             <FormControl required>
@@ -344,6 +392,7 @@ class Header extends Component {
                                     id='signupContactNo'
                                     type='text'
                                     signupcontactno={this.state.signupContactNo}
+                                    value={this.state.signupContactNo}
                                     onChange={this.inputSignupContactNoChangeHandler}
                                 />
                                 <FormHelperText className={this.state.signupContactNoRequired} error={true}>
@@ -364,7 +413,7 @@ class Header extends Component {
                         horizontal: 'left',
                     }}
                     open={this.state.openLoginMessage}
-                    autoHideDuration={6000}
+                    autoHideDuration={4000}
                     onClose={this.loginMessageOnCloseHandler}
                     ContentProps={{
                         'aria-describedby': 'message-d',
