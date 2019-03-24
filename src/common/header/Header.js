@@ -65,15 +65,19 @@ class Header extends Component {
             firstName: '',
             lastName: '',
             emailRequired: 'display-none',
+            emailRequiredMsg: 'required',
             email: '',
             signupPasswordRequired: 'display-none',
+            signupPasswordRequiredMsg: 'required',
             signupPassword: '',
             signupContactNoRequired: 'display-none',
+            signupContactNoRequiredMsg: 'required',
             signupContactNo: '',
             signupSuccess: false,
             loggedIn: sessionStorage.getItem('access-token') == null ? false : true,
             userFirstName: '',
-            openLoginMessage: false,
+            openLoginSuccessMsg: false,
+            openSignupSuccessMsg: false,
         }
     }
 
@@ -91,10 +95,13 @@ class Header extends Component {
             firstName: '',
             lastName: '',
             emailRequired: 'display-none',
+            emailRequiredMsg: 'required',
             email: '',
             signupPasswordRequired: 'display-none',
+            signupPasswordRequiredMsg: 'required',
             signupPassword: '',
             signupContactNoRequired: 'display-none',
+            signupContactNoRequiredMsg: 'required',
             signupContactNo: '',
         });
     }
@@ -116,30 +123,30 @@ class Header extends Component {
     }
 
     loginClickHandler = () => {
-        let contactRquired = false;
+        let contactReq = false;
         if (this.state.loginContactNo === '') {
             this.setState({
                 loginContactNoRequired: 'display-block',
                 loginContactNoRequiredMsg: 'required'
             });
-            contactRquired = true;
+            contactReq = true;
         } else {
             this.setState({loginContactNoRequired: 'display-none'});
         }
 
-        let passwordRequired = false;
+        let passwordReq = false;
         if (this.state.loginPassword === '') {
             this.setState({
                 loginPasswordRequired: 'display-block',
                 loginPasswordRequiredMsg: 'required'
             });
-            passwordRequired = true;
+            passwordReq = true;
         } else {
             this.setState({loginPasswordRequired: 'display-none'});
         }
 
         let validateContact = new RegExp('^[0][1-9]{9}$|^[1-9]{9}');
-        if (contactRquired === false && validateContact.test(this.state.loginContactNo) === false) {
+        if (contactReq === false && validateContact.test(this.state.loginContactNo) === false) {
             this.setState({
                 loginContactNoRequired: 'display-block',
                 loginContactNoRequiredMsg: 'Invalid Contact',
@@ -147,7 +154,7 @@ class Header extends Component {
             return;
         }
 
-        if (contactRquired || passwordRequired) {
+        if (contactReq || passwordReq) {
             return;
         }
 
@@ -156,7 +163,7 @@ class Header extends Component {
         let that = this;
         xhrLogin.addEventListener('readystatechange', function() {
             if (this.readyState === 4) {
-                let responseText = JSON.parse(this.responseText)
+                let responseText = JSON.parse(this.responseText);
                 console.log(responseText);
                 if (responseText.code === 'ATH-001' || responseText.code === 'ATH-002') {
                     that.setState({
@@ -172,7 +179,7 @@ class Header extends Component {
                 that.setState({
                     loggedIn: true,
                     userFirstName: responseText.first_name,
-                    openLoginMessage: true,
+                    openLoginSuccessMsg: true,
                 });
 
                 that.closeLoginModalHandler();
@@ -207,18 +214,130 @@ class Header extends Component {
     }
 
     singupClickHandler = () => {
-        this.state.firstName === '' ? this.setState({firstNameRequired: 'display-block'}) : this.setState({firstNameRequired: 'display-none'});
-        this.state.email === '' ? this.setState({emailRequired: 'display-block'}) : this.setState({emailRequired: 'display-none'});
-        this.state.signupPassword === '' ? this.setState({signupPasswordRequired: 'display-block'}) : this.setState({signupPasswordRequired: 'display-none'});
-        this.state.signupContactNo === '' ? this.setState({signupContactNoRequired: 'display-block'}): this.setState({signupContactNoRequired: 'display-none'});
+        // this.state.firstName === '' ? this.setState({firstNameRequired: 'display-block'}) : this.setState({firstNameRequired: 'display-none'});
+        // this.state.email === '' ? this.setState({emailRequired: 'display-block'}) : this.setState({emailRequired: 'display-none'});
+        // this.state.signupPassword === '' ? this.setState({signupPasswordRequired: 'display-block'}) : this.setState({signupPasswordRequired: 'display-none'});
+        // this.state.signupContactNo === '' ? this.setState({signupContactNoRequired: 'display-block'}): this.setState({signupContactNoRequired: 'display-none'});
+
+        let firstNameReq = false
+        if (this.state.firstName === '') {
+            this.setState({firstNameRequired: 'display-block'});
+            firstNameReq = true;
+        } else {
+            this.setState({firstNameRequired: 'display-none'});
+        }
+
+        let emailReq = false;
+        if (this.state.email === '') {
+            this.setState({
+                emailRequired: 'display-block',
+                emailRequiredMsg: 'required'
+            });
+            emailReq = true;
+        } else {
+            this.setState({emailRequired: 'display-none'});
+        }
+
+        let passwordReq = false;
+        if (this.state.signupPassword === '') {
+            this.setState({
+                signupPasswordRequired: 'display-block',
+                signupPasswordRequiredMsg: 'required'
+            });
+            passwordReq = true;
+        } else {
+            this.setState({signupPasswordRequired: 'display-none'});
+        }
+
+        let contactNoReq = false;
+        if (this.state.signupContactNo === '') {
+            this.setState({
+                signupContactNoRequired: 'display-block',
+                signupContactNoRequiredMsg: 'required'
+            })
+            contactNoReq = true;
+        } else {
+            this.setState({signupContactNoRequired: 'display-none'});
+        }
+
+        let validateEmail = new RegExp('^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}');
+        if (emailReq === false && validateEmail.test(this.state.email) === false) {
+            this.setState({
+                emailRequired: 'display-block',
+                emailRequiredMsg: 'Invalid Email'
+            });
+            return;
+        }
+
+        let validatePassword = new RegExp('^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#@$%&*!^-]).{8,}$');
+        if (passwordReq === false && validatePassword.test(this.state.signupPassword) === false) {
+            this.setState({
+                signupPasswordRequired: 'display-block',
+                signupPasswordRequiredMsg: 'Password must contain at least one capital letter, one small letter, one number, and one special character'
+            });
+            return;
+        }
+
+        let validateContact = new RegExp('^[0][1-9]{9}$|^[1-9]{9}');
+        if (contactNoReq === false && validateContact.test(this.state.signupContactNo) === false) {
+            this.setState({
+                signupContactNoRequired: 'display-block',
+                signupContactNoRequiredMsg: 'Contact No. must contain only numbers and must be 10 digits long'
+            });
+            return;
+        }
+
+        if (firstNameReq || emailReq || passwordReq || contactNoReq) {
+            return;
+        }
+
+        let dataSignup = {
+            'first_name': this.state.firstName,
+            'last_name': this.state.lastName,
+            'email_address': this.state.email,
+            'password': this.state.signupPassword,
+            'contact_number': this.state.signupContactNo,
+        };
+        let xhrSignup = new XMLHttpRequest();
+        let that = this;
+        xhrSignup.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                let responseText = JSON.parse(this.responseText);
+                console.log(responseText);
+                if (responseText.code === 'SGR-001') {
+                    that.setState({
+                        signupContactNoRequired: 'display-block',
+                        signupContactNoRequiredMsg: responseText.message
+                    });
+                    return;
+                }
+
+                that.setState({
+                    value: 0,
+                    openSignupSuccessMsg: true,
+                });
+            }
+        })
+        xhrSignup.open('POST', 'http://localhost:8080/api/customer/signup');
+        xhrSignup.setRequestHeader('Content-Type', 'application/json');
+        console.log(JSON.stringify(dataSignup));
+        xhrSignup.send(JSON.stringify(dataSignup));
     }
 
-    loginMessageOnCloseHandler = (event, reason) => {
+    loginSuccessMsgOnCloseHandler = (event, reason) => {
         if (reason === 'clickaway') {
             return;
         }
 
-        this.setState({openLoginMessage: false});
+        this.setState({openLoginSuccessMsg: false});
+    }
+
+    signupSuccessMsgOnCloseHandler = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({openSignupSuccessMsg: false});
     }
 
     render() {
@@ -361,7 +480,7 @@ class Header extends Component {
                                     onChange={this.inputEmailChangeHandler}
                                 />
                                 <FormHelperText className={this.state.emailRequired} error={true}>
-                                    <span>required</span>
+                                    <span>{this.state.emailRequiredMsg}</span>
                                 </FormHelperText>
                             </FormControl>
                             <br /><br />
@@ -379,7 +498,7 @@ class Header extends Component {
                                         onChange={this.inputSignupPasswordChangeHandler}
                                     />
                                     <FormHelperText className={this.state.signupPasswordRequired} error={true}>
-                                        <span>required</span>
+                                        <span>{this.state.signupPasswordRequiredMsg}</span>
                                     </FormHelperText>
                                 </FormControl>
                             </form>
@@ -396,7 +515,7 @@ class Header extends Component {
                                     onChange={this.inputSignupContactNoChangeHandler}
                                 />
                                 <FormHelperText className={this.state.signupContactNoRequired} error={true}>
-                                    <span>required</span>
+                                    <span>{this.state.signupContactNoRequiredMsg}</span>
                                 </FormHelperText>
                             </FormControl>
                             <br /><br />
@@ -412,14 +531,30 @@ class Header extends Component {
                         vertical: 'bottom',
                         horizontal: 'left',
                     }}
-                    open={this.state.openLoginMessage}
+                    open={this.state.openLoginSuccessMsg}
                     autoHideDuration={4000}
-                    onClose={this.loginMessageOnCloseHandler}
+                    onClose={this.loginSuccessMsgOnCloseHandler}
                     ContentProps={{
-                        'aria-describedby': 'message-d',
+                        'aria-describedby': 'message-id',
                     }}
                     message={<span id='message-id'>Logged in successfully!</span>}
                 />
+
+                {/* signup snackbar */}
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    open={this.state.openSignupSuccessMsg}
+                    autoHideDuration={4000}
+                    onClose={this.signupSuccessMsgOnCloseHandler}
+                    ContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span id='message-id'>Registered successfully! Please login now!</span>}
+                />
+
             </div>
         )
     }
