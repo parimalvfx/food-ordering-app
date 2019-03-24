@@ -18,6 +18,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Snackbar from '@material-ui/core/Snackbar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { Link } from 'react-router-dom';
 
 const loginModalStyle = {
     content: {
@@ -346,6 +347,19 @@ class Header extends Component {
         this.setState({ anchorEl: null });
     }
 
+    myProfileOnClickHandler = () => {
+        this.setState({ anchorEl: null });
+    }
+
+    logoutOnClickHandler = () => {
+        sessionStorage.removeItem('user-uuid');
+        sessionStorage.removeItem('access-token');
+        this.setState({
+            anchorEl: null,
+            loggedIn: false
+        });
+    }
+
     render() {
         const { classes } = this.props;
         const { anchorEl } = this.state;
@@ -408,8 +422,12 @@ class Header extends Component {
                                     open={Boolean(anchorEl)}
                                     onClose={this.userMenuOnCloseHandler}
                                 >
-                                    <MenuItem onClick={this.userMenuOnCloseHandler}>My Profile</MenuItem>
-                                    <MenuItem onClick={this.userMenuOnCloseHandler}>Logout</MenuItem>
+                                    <MenuItem onClick={this.myProfileOnClickHandler}>
+                                        <Link to='/profile' style={{ textDecoration: 'none' }}>
+                                            My Profile
+                                        </Link>
+                                    </MenuItem>
+                                    <MenuItem onClick={this.logoutOnClickHandler}>Logout</MenuItem>
                                 </Menu>
                             </div>
                         }
