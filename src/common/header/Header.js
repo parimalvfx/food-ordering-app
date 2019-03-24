@@ -16,6 +16,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import PropTypes from 'prop-types';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Snackbar from '@material-ui/core/Snackbar';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const loginModalStyle = {
     content: {
@@ -38,7 +40,7 @@ const styles = theme => ({
 
 const TabContainer = function (props) {
     return (
-        <Typography component='div' style={{padding: 0, textAlign: 'center'}}>
+        <Typography component='div' style={{ padding: 0, textAlign: 'center' }}>
             {props.children}
         </Typography>
     )
@@ -75,9 +77,10 @@ class Header extends Component {
             signupContactNo: '',
             signupSuccess: false,
             loggedIn: sessionStorage.getItem('access-token') == null ? false : true,
-            userFirstName: '',
             openLoginSuccessMsg: false,
             openSignupSuccessMsg: false,
+            userFirstName: '',
+            anchorEl: null,
         }
     }
 
@@ -107,19 +110,19 @@ class Header extends Component {
     }
 
     closeLoginModalHandler = () => {
-        this.setState({modalIsOpen: false});
+        this.setState({ modalIsOpen: false });
     }
 
     loginModalTabChangeHandler = (event, value) => {
-        this.setState({value});
+        this.setState({ value });
     }
 
     inputLoginContactNoChangeHandler = (event) => {
-        this.setState({loginContactNo: event.target.value});
+        this.setState({ loginContactNo: event.target.value });
     }
 
     inputLoginPasswordChangeHandler = (event) => {
-        this.setState({loginPassword: event.target.value});
+        this.setState({ loginPassword: event.target.value });
     }
 
     loginClickHandler = () => {
@@ -131,7 +134,7 @@ class Header extends Component {
             });
             contactReq = true;
         } else {
-            this.setState({loginContactNoRequired: 'display-none'});
+            this.setState({ loginContactNoRequired: 'display-none' });
         }
 
         let passwordReq = false;
@@ -142,7 +145,7 @@ class Header extends Component {
             });
             passwordReq = true;
         } else {
-            this.setState({loginPasswordRequired: 'display-none'});
+            this.setState({ loginPasswordRequired: 'display-none' });
         }
 
         let validateContact = new RegExp('^[0][1-9]{9}$|^[1-9]{9}');
@@ -161,7 +164,7 @@ class Header extends Component {
         let dataLogin = null;
         let xhrLogin = new XMLHttpRequest();
         let that = this;
-        xhrLogin.addEventListener('readystatechange', function() {
+        xhrLogin.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 let responseText = JSON.parse(this.responseText);
                 console.log(responseText);
@@ -194,37 +197,32 @@ class Header extends Component {
 
     inputFirstNameChangeHandler = (event) => {
         console.log(event.target.value);
-        this.setState({firstName: event.target.value});
+        this.setState({ firstName: event.target.value });
     }
 
     inputLastNameChangeHandler = (event) => {
-        this.setState({lastName: event.target.value});
+        this.setState({ lastName: event.target.value });
     }
 
     inputEmailChangeHandler = (event) => {
-        this.setState({email: event.target.value});
+        this.setState({ email: event.target.value });
     }
 
     inputSignupPasswordChangeHandler = (event) => {
-        this.setState({signupPassword: event.target.value});
+        this.setState({ signupPassword: event.target.value });
     }
 
     inputSignupContactNoChangeHandler = (event) => {
-        this.setState({signupContactNo: event.target.value});
+        this.setState({ signupContactNo: event.target.value });
     }
 
     singupClickHandler = () => {
-        // this.state.firstName === '' ? this.setState({firstNameRequired: 'display-block'}) : this.setState({firstNameRequired: 'display-none'});
-        // this.state.email === '' ? this.setState({emailRequired: 'display-block'}) : this.setState({emailRequired: 'display-none'});
-        // this.state.signupPassword === '' ? this.setState({signupPasswordRequired: 'display-block'}) : this.setState({signupPasswordRequired: 'display-none'});
-        // this.state.signupContactNo === '' ? this.setState({signupContactNoRequired: 'display-block'}): this.setState({signupContactNoRequired: 'display-none'});
-
         let firstNameReq = false
         if (this.state.firstName === '') {
-            this.setState({firstNameRequired: 'display-block'});
+            this.setState({ firstNameRequired: 'display-block' });
             firstNameReq = true;
         } else {
-            this.setState({firstNameRequired: 'display-none'});
+            this.setState({ firstNameRequired: 'display-none' });
         }
 
         let emailReq = false;
@@ -235,7 +233,7 @@ class Header extends Component {
             });
             emailReq = true;
         } else {
-            this.setState({emailRequired: 'display-none'});
+            this.setState({ emailRequired: 'display-none' });
         }
 
         let passwordReq = false;
@@ -246,7 +244,7 @@ class Header extends Component {
             });
             passwordReq = true;
         } else {
-            this.setState({signupPasswordRequired: 'display-none'});
+            this.setState({ signupPasswordRequired: 'display-none' });
         }
 
         let contactNoReq = false;
@@ -257,7 +255,7 @@ class Header extends Component {
             })
             contactNoReq = true;
         } else {
-            this.setState({signupContactNoRequired: 'display-none'});
+            this.setState({ signupContactNoRequired: 'display-none' });
         }
 
         let validateEmail = new RegExp('^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}');
@@ -300,7 +298,7 @@ class Header extends Component {
         };
         let xhrSignup = new XMLHttpRequest();
         let that = this;
-        xhrSignup.addEventListener('readystatechange', function() {
+        xhrSignup.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 let responseText = JSON.parse(this.responseText);
                 console.log(responseText);
@@ -329,7 +327,7 @@ class Header extends Component {
             return;
         }
 
-        this.setState({openLoginSuccessMsg: false});
+        this.setState({ openLoginSuccessMsg: false });
     }
 
     signupSuccessMsgOnCloseHandler = (event, reason) => {
@@ -337,11 +335,20 @@ class Header extends Component {
             return;
         }
 
-        this.setState({openSignupSuccessMsg: false});
+        this.setState({ openSignupSuccessMsg: false });
+    }
+
+    userMenuOnClickHandler = event => {
+        this.setState({ anchorEl: event.currentTarget });
+    }
+
+    userMenuOnCloseHandler = () => {
+        this.setState({ anchorEl: null });
     }
 
     render() {
         const { classes } = this.props;
+        const { anchorEl } = this.state;
         return (
             <div>
 
@@ -370,12 +377,42 @@ class Header extends Component {
                     </div>
 
                     {/* header app login */}
-                    <div className='app-login'>
-                        <Button id='login-btn' size='medium' variant='contained' color='default' onClick={this.openLoginModalHandler}>
-                            <AccountCircleIcon id='login-btn-icon' />
-                            LOGIN
-                        </Button>
-                    </div>
+                        {!this.state.loggedIn ?
+                            <div className='app-login'>
+                                <Button
+                                    id='login-btn'
+                                    size='medium'
+                                    variant='contained'
+                                    color='default'
+                                    onClick={this.openLoginModalHandler}
+                                >
+                                    <AccountCircleIcon id='login-btn-icon' />
+                                    LOGIN
+                                </Button>
+                            </div>
+                            :
+                            <div className='app-login'>
+                                <Button
+                                    id='login-btn'
+                                    size='medium'
+                                    aria-owns={anchorEl ? 'simple-menu' : undefined}
+                                    aria-haspopup='true'
+                                    onClick={this.userMenuOnClickHandler}
+                                >
+                                    <AccountCircleIcon id='login-btn-icon' />
+                                    {this.state.userFirstName}
+                                </Button>
+                                <Menu
+                                    id='user-menu'
+                                    anchorEl={anchorEl}
+                                    open={Boolean(anchorEl)}
+                                    onClose={this.userMenuOnCloseHandler}
+                                >
+                                    <MenuItem onClick={this.userMenuOnCloseHandler}>My Profile</MenuItem>
+                                    <MenuItem onClick={this.userMenuOnCloseHandler}>Logout</MenuItem>
+                                </Menu>
+                            </div>
+                        }
 
                 </header>
 
