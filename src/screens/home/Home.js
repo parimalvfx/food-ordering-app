@@ -11,8 +11,14 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 
 const styles = theme => ({
+    restaurantCardsGridList: {
+        // width: '75%',
+    },
     restaurantCard: {
+        width: 250,
         maxWidth: 250,
+        height: 340,
+        maxHeight: 340,
         marginTop: 15,
         marginBottom: 10,
         marginLeft: 25,
@@ -24,19 +30,21 @@ const styles = theme => ({
     restaurantName: {
         marginBottom: 20,
     },
-    restaurantCategories: {
-        marginBottom: 25,
+    ratingAvgRateDiv: {
+        position: 'absolute',
+        bottom: 20,
     },
-    restaurantRating: {
+    restaurantRatingDiv: {
         backgroundColor: '#EACC5E',
         width: 100,
         textAlign: 'center',
         float: 'left'
     },
-    ratingText: {
+    restaurantRatingText: {
         color: 'white',
     },
-    restaurantAvgRate: {
+    restaurantAvgRateText: {
+        marginLeft: 30,
         float: 'right',
     },
 });
@@ -71,7 +79,7 @@ class Home extends Component {
             <div>
                 <Header />
 
-                <GridList cols={4} cellHeight='auto'>
+                <GridList cols={4} cellHeight='auto' spacing={0} className={classes.restaurantCardsGridList}>
                     {this.state.restaurants.map(restaurant => (
                         <GridListTile key={'restaurant' + restaurant.id}>
 
@@ -79,26 +87,28 @@ class Home extends Component {
                                 <CardMedia
                                     className={classes.restaurantCardMedia}
                                     image={restaurant.photo_URL}
-                                    title={'Photo ' + restaurant.restaurant_name}
+                                    title={restaurant.restaurant_name}
                                 />
                                 <CardContent>
                                     <Typography className={classes.restaurantName} gutterBottom variant='h5' component='h2'>
                                         {restaurant.restaurant_name}
                                     </Typography>
 
-                                    <Typography className={classes.restaurantCategories} variant='subtitle1'>
+                                    <Typography variant='subtitle1'>
                                         {restaurant.categories}
                                     </Typography>
 
-                                    <div className={classes.restaurantRating}>
-                                        <Typography className={classes.ratingText} variant='body2'>
-                                            <i className="fa fa-star"></i> {restaurant.customer_rating} ({restaurant.number_customers_rated})
+                                    <div className={classes.ratingAvgRateDiv}>
+                                        <div className={classes.restaurantRatingDiv}>
+                                            <Typography className={classes.restaurantRatingText} variant='body2'>
+                                                <i className="fa fa-star"></i> {restaurant.customer_rating} ({restaurant.number_customers_rated})
+                                            </Typography>
+                                        </div>
+
+                                        <Typography className={classes.restaurantAvgRateText} variant='body2'>
+                                            <i className="fa fa-inr"></i>{restaurant.average_price} for two
                                         </Typography>
                                     </div>
-
-                                    <Typography className={classes.restaurantAvgRate} variant='body2'>
-                                        <i className="fa fa-inr"></i>{restaurant.average_price} for two
-                                    </Typography>
 
                                 </CardContent>
                             </Card>
