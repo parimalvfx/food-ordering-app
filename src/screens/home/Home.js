@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import './Home.css';
+import '../../assets/font-awesome-4.7.0/css/font-awesome.min.css'
 import { withStyles } from '@material-ui/core/styles';
 import Header from '../../common/header/Header';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import '../../assets/font-awesome-4.7.0/css/font-awesome.min.css'
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
 
 const styles = theme => ({
     restaurantCard: {
         maxWidth: 250,
-        maxHeight: 300,
         marginTop: 15,
         marginBottom: 10,
         marginLeft: 25,
@@ -41,40 +42,71 @@ const styles = theme => ({
 });
 
 class Home extends Component {
+
+    constructor() {
+        super();
+        this.state = {
+            restaurants: [],
+        }
+    }
+
+    componentWillMount() {
+        let that = this;
+        let dataRestaurants = null;
+        let xhrRestaurants = new XMLHttpRequest();
+        xhrRestaurants.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                that.setState({
+                    restaurants: JSON.parse(this.responseText).restaurants
+                })
+            }
+        })
+        xhrRestaurants.open('GET', 'http://localhost:8080/api/restaurant');
+        xhrRestaurants.send(dataRestaurants);
+    }
+
     render() {
         const { classes } = this.props;
         return (
             <div>
                 <Header />
 
-                <Card className={classes.restaurantCard}>
-                    <CardMedia
-                        className={classes.restaurantCardMedia}
-                        image='https://b.zmtcdn.com/data/res_imagery/42597_RESTAURANT_obp1.jpg'
-                        title='placeholder'
-                    />
-                    <CardContent>
-                        <Typography className={classes.restaurantName} gutterBottom variant='h5' component='h2'>
-                            3 Wise Monkeys
-                        </Typography>
+                <GridList cols={4} cellHeight='auto'>
+                    {this.state.restaurants.map(restaurant => (
+                        <GridListTile key={'restaurant' + restaurant.id}>
 
-                        <Typography className={classes.restaurantCategories} variant='p'>
-                            Chinese, Continental, Indian, Italian, Snacks
-                        </Typography>
+                            <Card className={classes.restaurantCard}>
+                                <CardMedia
+                                    className={classes.restaurantCardMedia}
+                                    image={restaurant.photo_URL}
+                                    title={'Photo ' + restaurant.restaurant_name}
+                                />
+                                <CardContent>
+                                    <Typography className={classes.restaurantName} gutterBottom variant='h5' component='h2'>
+                                        {restaurant.restaurant_name}
+                                    </Typography>
 
-                        <div className={classes.restaurantRating}>
-                            <Typography className={classes.ratingText} variant='body2'>
-                                <i class="fa fa-star"></i> 4.9 (28)
-                            </Typography>
-                        </div>
+                                    <Typography className={classes.restaurantCategories} variant='subtitle1'>
+                                        {restaurant.categories}
+                                    </Typography>
 
-                        <Typography className={classes.restaurantAvgRate} variant='body2'>
-                            <i class="fa fa-inr"></i>1100 for two
-                        </Typography>
+                                    <div className={classes.restaurantRating}>
+                                        <Typography className={classes.ratingText} variant='body2'>
+                                            <i className="fa fa-star"></i> {restaurant.customer_rating} ({restaurant.number_customers_rated})
+                                        </Typography>
+                                    </div>
 
-                    </CardContent>
-                </Card>
+                                    <Typography className={classes.restaurantAvgRate} variant='body2'>
+                                        <i className="fa fa-inr"></i>{restaurant.average_price} for two
+                                    </Typography>
 
+                                </CardContent>
+                            </Card>
+                        
+                        </GridListTile>
+                    ))
+                    }
+                </GridList>
             </div>
         )
     }
