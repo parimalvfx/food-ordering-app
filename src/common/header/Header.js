@@ -80,7 +80,6 @@ class Header extends Component {
             loggedIn: sessionStorage.getItem('access-token') == null ? false : true,
             openLoginSuccessMsg: false,
             openSignupSuccessMsg: false,
-            userFirstName: '',
             anchorEl: null,
         }
     }
@@ -177,12 +176,12 @@ class Header extends Component {
                     return;
                 }
 
-                sessionStorage.setItem('user-uuid', responseText.id);
                 sessionStorage.setItem('access-token', xhrLogin.getResponseHeader('access-token'));
+                sessionStorage.setItem('user-uuid', responseText.id);
+                sessionStorage.setItem('user-first-name', responseText.first_name);
 
                 that.setState({
                     loggedIn: true,
-                    userFirstName: responseText.first_name,
                     openLoginSuccessMsg: true,
                 });
 
@@ -414,7 +413,7 @@ class Header extends Component {
                                     onClick={this.userMenuOnClickHandler}
                                 >
                                     <AccountCircleIcon id='login-btn-icon' />
-                                    {this.state.userFirstName}
+                                    {sessionStorage.getItem('user-first-name')}
                                 </Button>
                                 <Menu
                                     id='user-menu'
