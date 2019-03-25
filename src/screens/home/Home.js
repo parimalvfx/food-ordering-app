@@ -12,7 +12,8 @@ import GridListTile from '@material-ui/core/GridListTile';
 
 const styles = theme => ({
     restaurantCardsGridList: {
-        // width: '75%',
+        position: 'absolute',
+        margin: 'auto',
     },
     restaurantCard: {
         width: 250,
@@ -22,6 +23,7 @@ const styles = theme => ({
         marginTop: 15,
         marginBottom: 10,
         marginLeft: 25,
+        marginRight: 5,
         paddingBottom: 15,
     },
     restaurantCardMedia: {
@@ -49,12 +51,14 @@ const styles = theme => ({
     },
 });
 
-class Home extends Component {
 
+class Home extends Component {
+    
     constructor() {
         super();
         this.state = {
             restaurants: [],
+            cards: 2,
         }
     }
 
@@ -71,6 +75,35 @@ class Home extends Component {
         })
         xhrRestaurants.open('GET', 'http://localhost:8080/api/restaurant');
         xhrRestaurants.send(dataRestaurants);
+
+        this.updateCardsGridListCols();
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.updateCardsGridListCols);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateCardsGridListCols);
+    }
+
+    updateCardsGridListCols = () => {
+        if (window.innerWidth >= 1500) {
+            this.setState({cards: 5});
+            return;
+        }
+
+        if (window.innerWidth >= 1200) {
+            this.setState({cards: 4});
+            return;
+        }
+
+        if (window.innerWidth >= 900) {
+            this.setState({cards: 3});
+            return;
+        }
+
+        this.setState({cards: 2});
     }
 
     render() {
@@ -79,7 +112,11 @@ class Home extends Component {
             <div>
                 <Header />
 
-                <GridList cols={4} cellHeight='auto' spacing={0} className={classes.restaurantCardsGridList}>
+                <GridList
+                    className={classes.restaurantCardsGridList}
+                    cols={this.state.cards}
+                    cellHeight='auto'
+                >
                     {this.state.restaurants.map(restaurant => (
                         <GridListTile key={'restaurant' + restaurant.id}>
 
