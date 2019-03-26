@@ -40,6 +40,15 @@
     margin-right: 5px;
 }
 
+#user-btn-icon {
+    margin-right: 5px;
+    color: lightgray;
+}
+
+#user-btn {
+    color: lightgray;
+}
+
 .login-signup-tabs {
     margin-bottom: 20px;
 }

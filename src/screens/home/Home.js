@@ -11,8 +11,11 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 
 const styles = theme => ({
+    nullRestaurantList: {
+        marginTop: 15,
+        marginLeft: 25,
+    },
     restaurantCardsGridList: {
-        position: 'absolute',
         margin: 'auto',
     },
     restaurantCard: {
@@ -25,6 +28,7 @@ const styles = theme => ({
         marginLeft: 25,
         marginRight: 5,
         paddingBottom: 15,
+        cursor: 'pointer',
     },
     restaurantCardMedia: {
         height: 140
@@ -51,9 +55,8 @@ const styles = theme => ({
     },
 });
 
-
 class Home extends Component {
-    
+
     constructor() {
         super();
         this.state = {
@@ -88,17 +91,17 @@ class Home extends Component {
     }
 
     updateCardsGridListCols = () => {
-        if (window.innerWidth >= 1500) {
+        if (window.innerWidth >= 1530) {
             this.setState({cards: 5});
             return;
         }
 
-        if (window.innerWidth >= 1200) {
+        if (window.innerWidth >= 1270) {
             this.setState({cards: 4});
             return;
         }
 
-        if (window.innerWidth >= 900) {
+        if (window.innerWidth >= 1000) {
             this.setState({cards: 3});
             return;
         }
@@ -106,54 +109,95 @@ class Home extends Component {
         this.setState({cards: 2});
     }
 
+    restaurantCardTileOnClickHandler = (restaurantId) => {
+        this.props.history.push('/restaurant/' + restaurantId);
+    }
+
+    searchHandler = (event) => {
+        let that = this;
+        let dataRestaurants = null;
+        let xhrRestaurants = new XMLHttpRequest();
+        xhrRestaurants.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                if (!JSON.parse(this.responseText).restaurants) {
+                    that.setState({
+                        restaurants: null,
+                    })
+                } else {
+                    that.setState({
+                        restaurants: JSON.parse(this.responseText).restaurants,
+                    })
+                }
+            }
+        })
+        if (event.target.value === '') {
+            xhrRestaurants.open('GET', 'http://localhost:8080/api/restaurant');
+        } else {
+            xhrRestaurants.open('GET', 'http://localhost:8080/api/restaurant/name/' + event.target.value);
+        }
+        xhrRestaurants.send(dataRestaurants);
+    }
+
     render() {
         const { classes } = this.props;
         return (
             <div>
-                <Header />
+                <Header
+                    searchHandler={this.searchHandler}
+                />
 
-                <GridList
-                    className={classes.restaurantCardsGridList}
-                    cols={this.state.cards}
-                    cellHeight='auto'
-                >
-                    {this.state.restaurants.map(restaurant => (
-                        <GridListTile key={'restaurant' + restaurant.id}>
+                {this.state.restaurants === null ?
+                    <Typography className={classes.nullRestaurantList} variant='h6'>
+                        No restaurant with the given name.
+                    </Typography>
+                    :
+                    <GridList
+                        className={classes.restaurantCardsGridList}
+                        cols={this.state.cards}
+                        cellHeight='auto'
+                    >
+                        {this.state.restaurants.map(restaurant => (
+                            <GridListTile
+                            onClick={() => this.restaurantCardTileOnClickHandler(restaurant.id)}
+                                key={'restaurant' + restaurant.id}
+                                >
 
-                            <Card className={classes.restaurantCard}>
-                                <CardMedia
-                                    className={classes.restaurantCardMedia}
-                                    image={restaurant.photo_URL}
-                                    title={restaurant.restaurant_name}
-                                />
-                                <CardContent>
-                                    <Typography className={classes.restaurantName} gutterBottom variant='h5' component='h2'>
-                                        {restaurant.restaurant_name}
-                                    </Typography>
+                                {/* <Link to={'/restaurant/' + restaurant.id}> */}
+                                <Card className={classes.restaurantCard} style={{ textDecoration: 'none' }}>
+                                    <CardMedia
+                                        className={classes.restaurantCardMedia}
+                                        image={restaurant.photo_URL}
+                                        title={restaurant.restaurant_name}
+                                        />
+                                    <CardContent>
+                                        <Typography className={classes.restaurantName} gutterBottom variant='h5' component='h2'>
+                                            {restaurant.restaurant_name}
+                                        </Typography>
 
-                                    <Typography variant='subtitle1'>
-                                        {restaurant.categories}
-                                    </Typography>
+                                        <Typography variant='subtitle1'>
+                                            {restaurant.categories}
+                                        </Typography>
 
-                                    <div className={classes.ratingAvgRateDiv}>
-                                        <div className={classes.restaurantRatingDiv}>
-                                            <Typography className={classes.restaurantRatingText} variant='body2'>
-                                                <i className="fa fa-star"></i> {restaurant.customer_rating} ({restaurant.number_customers_rated})
+                                        <div className={classes.ratingAvgRateDiv}>
+                                            <div className={classes.restaurantRatingDiv}>
+                                                <Typography className={classes.restaurantRatingText} variant='body2'>
+                                                    <i className="fa fa-star"></i> {restaurant.customer_rating} ({restaurant.number_customers_rated})
+                                                </Typography>
+                                            </div>
+
+                                            <Typography className={classes.restaurantAvgRateText} variant='body2'>
+                                                <i className="fa fa-inr"></i>{restaurant.average_price} for two
                                             </Typography>
                                         </div>
 
-                                        <Typography className={classes.restaurantAvgRateText} variant='body2'>
-                                            <i className="fa fa-inr"></i>{restaurant.average_price} for two
-                                        </Typography>
-                                    </div>
+                                    </CardContent>
+                                </Card>
 
-                                </CardContent>
-                            </Card>
-                        
-                        </GridListTile>
-                    ))
-                    }
-                </GridList>
+                            </GridListTile>
+                        ))
+                        }
+                    </GridList>
+                }
             </div>
         )
     }
