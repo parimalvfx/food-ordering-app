@@ -1,0 +1,84 @@
+.app-header {
+    background-color: #253238;
+    height: 60px;
+    position: relative;
+}
+
+#fast-food-icon {
+    color: white;
+    margin-left: 16px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.search-box {
+    width: 250px;
+    margin: auto;
+    top: 50%;
+    transform: translateY(40%);
+}
+
+#search-box-icon {
+    color: white;
+    margin-bottom: 6px;
+}
+
+#search-box-input {
+    color: rgb(255, 255, 255);
+    width: 250px;
+}
+
+.app-login {
+    float: right;
+    margin-right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#login-btn-icon {
+    margin-right: 5px;
+}
+
+.login-signup-tabs {
+    margin-bottom: 20px;
+}
+
+.display-none {
+    display: none;
+}
+
+.display-block {
+    display: block;
+}
+
+#modal-login-btn,
+#modal-signup-btn {
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 600px) {
+
+    .app-header {
+        display: block;
+        height: auto;
+        padding-bottom: 16px;
+    }
+
+    #fast-food-icon {
+        margin: 13px 0 0 16px;
+        position: unset;
+        transform: none;
+    }
+
+    .search-box {
+        margin: 16px 0 0 16px;
+        transform: none;
+    }
+
+    .app-login {
+        float: none;
+        margin: 16px 0 0 16px;
+        transform: none;
+    }
+}
