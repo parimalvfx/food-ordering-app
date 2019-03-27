@@ -349,8 +349,9 @@ class Header extends Component {
     }
 
     logoutOnClickHandler = () => {
-        sessionStorage.removeItem('user-uuid');
         sessionStorage.removeItem('access-token');
+        sessionStorage.removeItem('user-uuid');
+        sessionStorage.removeItem('user-first-name');
         this.setState({
             anchorEl: null,
             loggedIn: false
@@ -384,6 +385,7 @@ class Header extends Component {
                                     <SearchIcon id='search-box-icon' />
                                 </InputAdornment>
                             }
+                            onChange={this.props.searchHandler}
                         />
                     </div>
 
@@ -391,7 +393,6 @@ class Header extends Component {
                         {!this.state.loggedIn ?
                             <div className='app-login'>
                                 <Button
-                                    id='login-btn'
                                     size='medium'
                                     variant='contained'
                                     color='default'
@@ -404,13 +405,13 @@ class Header extends Component {
                             :
                             <div className='app-login'>
                                 <Button
-                                    id='login-btn'
+                                    id='user-btn'
                                     size='medium'
                                     aria-owns={anchorEl ? 'simple-menu' : undefined}
                                     aria-haspopup='true'
                                     onClick={this.userMenuOnClickHandler}
                                 >
-                                    <AccountCircleIcon id='login-btn-icon' />
+                                    <AccountCircleIcon id='user-btn-icon' />
                                     {sessionStorage.getItem('user-first-name')}
                                 </Button>
                                 <Menu
