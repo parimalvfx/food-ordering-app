@@ -15,6 +15,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 const styles = theme => ({});
 
 class Details extends Component {
@@ -58,17 +59,17 @@ class Details extends Component {
         return checkoutArr.map((item, index)=>{
             return <div className="flex width-100 pd-1-per" key={index}>
                 <div className="width-5"><i className={item.item_type==='NON_VEG' ? 'fa fa-stop-circle-o non-veg':'fa fa-stop-circle-o veg'}></i></div>
-                <div  className="width-40 capital">{item.item_name}</div>
+                <div  className="width-40 capital checkout-grey-color">{item.item_name}</div>
                 <div  className="width-45">
-                    <IconButton  aria-label="AddIcon" style={{padding:'1px'}} onClick={this.addMenuClick(item)}>
-                        <AddIcon  />
+                    <IconButton  aria-label="AddIcon" className="btn-hover" style={{padding:'1px'}} onClick={this.removeMenuClick(item)}>
+                        <div className="minus-icon"> - </div>
                     </IconButton>
                     {item.count}
-                    <IconButton  aria-label="Add" style={{padding:'1px'}} onClick={this.addMenuClick(item)}>
-                        <AddIcon  />
+                    <IconButton  aria-label="Add" className="btn-hover"  style={{padding:'1px'}} onClick={this.addMenuClick(item)}>
+                        <AddIcon className="black-color" />
                     </IconButton>
                 </div>
-                <div  className="width-10"><i className='fa fa-inr'></i> {item.totalItemPrice}</div>
+                <div  className="width-10 checkout-grey-color"><i className='fa fa-inr'></i> {item.totalItemPrice}</div>
 
             </div>
         })
@@ -80,10 +81,25 @@ class Details extends Component {
             data.categories.map((item,index)=>{
                 return <div className="mt-15">
                     <div>{item.category_name}</div>
-                    <Divider />
+                    <Divider className="divider-margin-10"/>
                     {this.getEachDish(item.item_list, item.category_name)}
                 </div>
             }):null
+    }
+    removeMenuClick=item=>event=>{
+        console.log(this.state.checkoutArr)
+        if(item.count === 1){
+            let newArr = this.state.checkoutArr.filter(data=>item.id !== data.id && item.category_name !== data.category_name)
+            this.setState({checkoutArr:newArr})
+        } else {
+            let newArr = [...this.state.checkoutArr]
+            newArr.forEach((data)=>{
+                if(item.id === data.id && item.category_name === data.category_name){
+                    newArr.count = data.count-1
+                }
+            })
+            this.setState({checkoutArr:newArr})
+        }
     }
     addMenuClick =item=>event => {
         let selectedItem,newAdded
@@ -91,7 +107,7 @@ class Details extends Component {
         if(duplicates.length>0){
             selectedItem=this.state.checkoutArr.map(eachItem=>{
                 if(eachItem.id === duplicates[0].id && eachItem.category_name === duplicates[0].category_name){
-                    let count = duplicates.length+1
+                    let count = eachItem.count+1
                     eachItem.count = count
                     eachItem.totalItemPrice = eachItem.price*count
                 }
@@ -130,31 +146,62 @@ class Details extends Component {
         return (
             <>
                 <Header />
-                <div className="detail-container">
-                    <div className = "container_item1">
-                        <img src = {photo_URL} width="200" height="200"/>
-                    </div>
-                    <div className = "container_item2">
-                        <h1>{restaurant_name}</h1>
-                        <h3>{address.locality}</h3>
-                        <h3>{this.getCategory()}</h3>
-                        <div className = "item_container">
-                            <div className = "container_item3">
-                                <i className='fa fa-star'></i>
-                                {customer_rating}
-                                <p className = "text_format">AVERAGE RATING BY<br/><span className="bold">{number_customers_rated}</span> CUSTOMERS</p>
-                            </div>
-                            <div className = "container_item3">
-                                <i className='fa fa-inr'></i>
-                                {average_price}
-                                <p className = "text_format">AVERAGE COST FOR<br/>TWO PEOPLE</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex padding-itembox">
-                    <div className="flex-50">{this.getCategoryList()}</div>
-                    <Snackbar
+                <div>
+                <Grid container spacing={24} className="bggrey mobile-text-center" >
+                    <Grid item xs={12} sm={3} className="text-center">
+                        <img src = {photo_URL} width="300" alt={photo_URL} height="250" className="mobile-margin-top-20"/>
+                    </Grid>
+                    <Grid item xs={12} sm={9}>
+                        <Grid container spacing={24}>
+                            <Grid item xs={12} sm={12} className="font-family-serif">
+                                <h1>{restaurant_name}</h1>
+                                <h3>{address.locality}</h3>
+                                <h3>{this.getCategory()}</h3>
+                                <Grid container spacing={24}>
+                                    <Grid item xs={6} sm={6}>
+                                        <div className = "container_item3">
+                                            <i className='fa fa-star'></i>
+                                             {customer_rating}
+                                            <p className = "text_format">AVERAGE RATING BY<br/><span className="bold">{number_customers_rated}</span> CUSTOMERS</p>
+                                        </div>
+                                    </Grid>
+                                    <Grid item xs={6} sm={6}>
+                                        <div className = "container_item3">
+                                                <i className='fa fa-inr'></i>
+                                                 {average_price}
+                                                <p className = "text_format">AVERAGE COST FOR<br/>TWO PEOPLE</p>
+                                            </div>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid container spacing={24} className="item-list-container">
+                        <Grid item xs={12} sm={7}>
+                            {this.getCategoryList()}
+                        </Grid>
+                        <Grid item xs={12} sm={5}>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h5"  color="default" gutterBottom>
+                                    <Badge badgeContent={this.state.itemAdded} color="primary">
+                                        <ShoppingCart />
+                                    </Badge>
+                                    <span className="mycart">My Cart</span>
+                                </Typography>
+                                
+                                {this.getCheckoutDishList(this.state.checkoutArr)}
+                                <div className="bold pd-1-per">Total Amount <span className="right mr-8"><i className='fa fa-inr'></i> {this.state.totalPrice}</span></div>
+                                <Button className="mt-24-px" variant="contained" fullWidth size="medium" color="primary" onClick={this.checkoutHandler}>
+                                    CHECKOUT
+                                </Button>
+                            </CardContent>
+
+                        </Card>
+                        </Grid>
+                </Grid>
+                <Snackbar
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'left',
@@ -180,24 +227,6 @@ class Details extends Component {
                             </IconButton>,
                         ]}
                     />
-                    <div className="flex-50">
-                        <Card className="margin-2em">
-                            <CardContent>
-                                <Typography variant="h5"  color="default" gutterBottom>
-                                    <Badge badgeContent={this.state.itemAdded} color="primary">
-                                        <ShoppingCart />
-                                    </Badge>
-                                    <span className="mycart">My Cart</span>
-                                </Typography>
-                                <div className="bold">Total Amount <span className="right mr-8"><i className='fa fa-inr'></i> {this.state.totalPrice}</span></div>
-                                {this.getCheckoutDishList(this.state.checkoutArr)}
-                                <Button className="mt-24-px" variant="contained" fullWidth size="medium" color="primary" onClick={this.checkoutHandler}>
-                                    CHECKOUT
-                                </Button>
-                            </CardContent>
-
-                        </Card>
-                    </div>
                 </div>
             </>
         )
