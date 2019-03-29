@@ -6,6 +6,11 @@ import Header from '../../common/header/Header';
 const styles = theme => ({});
 
 class Checkout extends Component {
+    constructor(props){
+        super(props)
+        console.log(props.history.location.state)
+        
+    }
     render() {
         return (
             <div>
