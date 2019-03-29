@@ -13,6 +13,8 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -41,6 +43,23 @@ const styles = theme => ({
     tabRoot: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
+    },
+    existingAddressTabContainer: {
+        float: 'left',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        overflow: 'hidden',
+        backgroundColor: theme.palette.background.paper,
+    },
+    gridList: {
+        flexWrap: 'nowrap',
+        transform: 'translateZ(0)',
+    },
+    existingAddressGridListTile: {
+        borderStyle: 'solid',
+        borderColor: 'coral',
+        marginRight: '20px',
     },
     radioRoot: {
         display: 'flex',
@@ -87,6 +106,7 @@ class Checkout extends Component {
             pincodeRequired: 'display-none',
             pincodeRequiredMsg: 'required',
             pincode: '',
+            customerExistingAddresses: [],
             states: [],
             paymentModes: [],
             radioValue: '',
@@ -99,6 +119,20 @@ class Checkout extends Component {
 
     componentWillMount() {
         let that = this;
+
+        // customer existing address
+        let dataCustomerAddress = null;
+        let xhrCustomerAddress = new XMLHttpRequest();
+        xhrCustomerAddress.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                that.setState({
+                    customerExistingAddresses: JSON.parse(this.responseText).addresses,
+                });
+            }
+        });
+        xhrCustomerAddress.open('GET', 'http://localhost:8080/api/address/customer');
+        xhrCustomerAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
+        xhrCustomerAddress.send(dataCustomerAddress);
 
         // states request
         let dataStates = null;
@@ -225,6 +259,30 @@ class Checkout extends Component {
             return;
         }
 
+        let stateUUID = '';
+        for (let state of this.state.states) {
+            if (state.state_name === this.state.newAddressState) {
+                stateUUID = state.id;
+            }
+        }
+
+        let dataNewAddress = {
+            'city': this.state.city,
+            'flat_building_name': this.state.flatBuildingNo,
+            'locality': this.state.locality,
+            'pincode': this.state.pincode,
+            'state_uuid': stateUUID
+        }
+        let xhrNewAddress = new XMLHttpRequest();
+        xhrNewAddress.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                window.alert('New address added!');
+            }
+        })
+        xhrNewAddress.open('POST', 'http://localhost:8080/api/address');
+        xhrNewAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
+        xhrNewAddress.setRequestHeader('Content-Type', 'application/json');
+        xhrNewAddress.send(JSON.stringify(dataNewAddress));
     };
 
     radioChangeHandler = event => {
@@ -260,8 +318,43 @@ class Checkout extends Component {
 
                                             {/* existing address */}
                                             {tabValue === 0 &&
-                                                <TabContainer>
-                                                    foo
+                                                <TabContainer className={classes.existingAddressTabContainer}>
+
+                                                    <GridList className={classes.gridList} cols={3}>
+
+                                                        {this.state.customerExistingAddresses.map(address => (
+                                                            <GridListTile key={'address' + address.id} className={classes.existingAddressGridListTile}>
+
+                                                                {/* existing address - flat/building no */}
+                                                                <Typography variant='subtitle1'>
+                                                                    {address.flat_building_name}
+                                                                </Typography>
+
+                                                                {/* existing address - locality */}
+                                                                <Typography variant='subtitle1'>
+                                                                    {address.locality}
+                                                                </Typography>
+
+                                                                {/* existing address - city */}
+                                                                <Typography variant='subtitle1'>
+                                                                    {address.city}
+                                                                </Typography>
+
+                                                                {/* existing address - state */}
+                                                                <Typography variant='subtitle1'>
+                                                                    {address.state.state_name}
+                                                                </Typography>
+
+                                                                {/* existing address - pincode */}
+                                                                <Typography variant='subtitle1'>
+                                                                    {address.pincode}
+                                                                </Typography>
+
+                                                            </GridListTile>
+                                                        ))}
+
+                                                    </GridList>
+
                                                 </TabContainer>
                                             }
 
