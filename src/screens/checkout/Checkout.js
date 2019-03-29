@@ -76,10 +76,20 @@ class Checkout extends Component {
         this.state = {
             activeStep: 0,
             tabValue: 0,
+            flatBuildingNoRequired: 'display-none',
+            flatBuildingNo: '',
+            localityRequired: 'display-none',
+            locality: '',
+            cityRequired: 'display-none',
+            city: '',
+            stateRequired: 'display-none',
+            newAddressState: '',
+            pincodeRequired: 'display-none',
+            pincodeRequiredMsg: 'required',
+            pincode: '',
             states: [],
             paymentModes: [],
             radioValue: '',
-            newAddressState: '',
         }
     };
 
@@ -137,6 +147,84 @@ class Checkout extends Component {
 
     tabChangeHandler = (event, value) => {
         this.setState({tabValue: value});
+    };
+
+    flatBuildingNoChangeHandler = event => {
+        this.setState({flatBuildingNo: event.target.value});
+    };
+
+    localityChangeHandler = event => {
+        this.setState({locality: event.target.value});
+    };
+
+    cityChangeHandler = event => {
+        this.setState({city: event.target.value});
+    };
+
+    stateChangeHandler = event => {
+        this.setState({newAddressState: event.target.value});
+    };
+
+    pincodeChangeHandler = event => {
+        this.setState({pincode: event.target.value});
+    };
+
+    saveAddressOnClickHandler = () => {
+        let flatBuildingNoReq = false;
+        if (this.state.flatBuildingNo === '') {
+            this.setState({flatBuildingNoRequired: 'display-block'});
+            flatBuildingNoReq = true;
+        } else {
+            this.setState({flatBuildingNoRequired: 'display-none'});
+        }
+
+        let localityReq = false;
+        if (this.state.locality === '') {
+            this.setState({localityRequired: 'display-block'});
+            localityReq = true;
+        }   else {
+            this.setState({localityRequired: 'display-none'});
+        }
+
+        let cityReq = false;
+        if (this.state.city === '') {
+            this.setState({cityRequired: 'display-block'});
+            cityReq = true;
+        } else {
+            this.setState({cityRequired: 'display-none'});
+        }
+
+        let stateReq = false;
+        if (this.state.newAddressState === '') {
+            this.setState({stateRequired: 'display-block'});
+            stateReq = true;
+        } else {
+            this.setState({stateRequired: 'display-none'});
+        }
+
+        let pincodeReq = false;
+        if (this.state.pincode === '') {
+            this.setState({
+                pincodeRequired: 'display-block',
+                pincodeRequiredMsg: 'required'
+            });
+            pincodeReq = true;
+        } else {
+            this.setState({pincodeRequired: 'display-none'});
+        }
+
+        let validatePincode = new RegExp('^[1-9][0-9]{5}$');
+        if (pincodeReq === false && validatePincode.test(this.state.pincode) === false) {
+            this.setState({
+                pincodeRequired: 'display-block',
+                pincodeRequiredMsg: 'Pincode must contain only numbers and must be 6 digits long'
+            })
+        }
+
+        if (flatBuildingNoReq || localityReq || cityReq || stateReq || pincodeReq) {
+            return;
+        }
+
     };
 
     radioChangeHandler = event => {
@@ -250,6 +338,7 @@ class Checkout extends Component {
                                                     </FormControl>
                                                     <br /><br />
 
+                                                    {/* new address - pincode */}
                                                     <FormControl required>
                                                         <InputLabel htmlFor='pincode'>Pincode</InputLabel>
                                                         <Input
@@ -260,11 +349,18 @@ class Checkout extends Component {
                                                             onChange={this.pincodeChangeHandler}
                                                         />
                                                         <FormHelperText className={this.state.pincodeRequired} error={true}>
-                                                            <span>required</span>
+                                                            <span>{this.state.pincodeRequiredMsg}</span>
                                                         </FormHelperText>
                                                     </FormControl>
+                                                    <br /><br />
 
-
+                                                    <Button
+                                                        variant='contained'
+                                                        color='secondary'
+                                                        onClick={this.saveAddressOnClickHandler}
+                                                    >
+                                                        Save Address
+                                                    </Button>
                                                 </TabContainer>
                                             }
                                         </div>
