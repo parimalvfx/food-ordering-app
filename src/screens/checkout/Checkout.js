@@ -17,6 +17,10 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@material-ui/core/Input';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 
@@ -72,8 +76,10 @@ class Checkout extends Component {
         this.state = {
             activeStep: 0,
             tabValue: 0,
+            states: [],
             paymentModes: [],
             radioValue: '',
+            newAddressState: '',
         }
     };
 
@@ -83,17 +89,32 @@ class Checkout extends Component {
 
     componentWillMount() {
         let that = this;
+
+        // states request
+        let dataStates = null;
+        let xhrStates = new XMLHttpRequest();
+        xhrStates.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                that.setState({
+                    states: JSON.parse(this.responseText).states,
+                });
+            }
+        });
+        xhrStates.open('GET', 'http://localhost:8080/api/states');
+        xhrStates.send(dataStates);
+
+        // payment modes request
         let dataPaymentModes = null;
-        let xhrRestaurants = new XMLHttpRequest();
-        xhrRestaurants.addEventListener('readystatechange', function() {
+        let xhrPaymentModes = new XMLHttpRequest();
+        xhrPaymentModes.addEventListener('readystatechange', function() {
             if (this.readyState === 4) {
                 that.setState({
                     paymentModes: JSON.parse(this.responseText).paymentMethods,
-                })
+                });
             }
-        })
-        xhrRestaurants.open('GET', 'http://localhost:8080/api/payment');
-        xhrRestaurants.send(dataPaymentModes);
+        });
+        xhrPaymentModes.open('GET', 'http://localhost:8080/api/payment');
+        xhrPaymentModes.send(dataPaymentModes);
     };
 
     stepperNextHandler = () => {
@@ -148,8 +169,104 @@ class Checkout extends Component {
                                                     <Tab label='NEW ADDRESS'/>
                                                 </Tabs>
                                             </AppBar>
-                                            {tabValue === 0 && <TabContainer>foo</TabContainer>}
-                                            {tabValue === 1 && <TabContainer>bar</TabContainer>}
+
+                                            {/* existing address */}
+                                            {tabValue === 0 &&
+                                                <TabContainer>
+                                                    foo
+                                                </TabContainer>
+                                            }
+
+                                            {/* new address */}
+                                            {tabValue === 1 &&
+                                                <TabContainer>
+
+                                                    {/* new address - flat/building no */}
+                                                    <FormControl required>
+                                                        <InputLabel htmlFor='flatBuildingNo'>Flat / Building No.</InputLabel>
+                                                        <Input
+                                                            id='flatBuildingNo'
+                                                            type='text'
+                                                            flatbuildingno={this.state.flatBuildingNo}
+                                                            value={this.state.flatBuildingNo}
+                                                            onChange={this.flatBuildingNoChangeHandler}
+                                                        />
+                                                        <FormHelperText className={this.state.flatBuildingNoRequired} error={true}>
+                                                            <span>required</span>
+                                                        </FormHelperText>
+                                                    </FormControl>
+                                                    <br /><br />
+
+                                                    {/* new address - locality */}
+                                                    <FormControl required>
+                                                        <InputLabel htmlFor='locality'>Locality</InputLabel>
+                                                        <Input
+                                                            id='locality'
+                                                            type='text'
+                                                            locality={this.state.locality}
+                                                            value={this.state.locality}
+                                                            onChange={this.localityChangeHandler}
+                                                        />
+                                                        <FormHelperText className={this.state.localityRequired} error={true}>
+                                                            <span>required</span>
+                                                        </FormHelperText>
+                                                    </FormControl>
+                                                    <br /><br />
+
+                                                    {/* new address - city */}
+                                                    <FormControl required>
+                                                        <InputLabel htmlFor='city'>City</InputLabel>
+                                                        <Input
+                                                            id='city'
+                                                            type='text'
+                                                            city={this.state.city}
+                                                            value={this.state.city}
+                                                            onChange={this.cityChangeHandler}
+                                                        />
+                                                        <FormHelperText className={this.state.cityRequired} error={true}>
+                                                            <span>required</span>
+                                                        </FormHelperText>
+                                                    </FormControl>
+                                                    <br /><br />
+
+                                                    {/* new address - state */}
+                                                    <FormControl required className={classes.newAddressFormControl}>
+                                                        <InputLabel htmlFor='newAddressstate'>State</InputLabel>
+                                                        <Select
+                                                            id='newAddressstate'
+                                                            newaddressstate={this.state.newAddressState}
+                                                            value={this.state.newAddressState}
+                                                            onChange={this.stateChangeHandler}
+                                                        >
+                                                            {this.state.states.map(state => (
+                                                                <MenuItem key={'state' + state.id} value={state.state_name}>
+                                                                    {state.state_name}
+                                                                </MenuItem>
+                                                            ))}
+                                                        </Select>
+                                                        <FormHelperText className={this.state.stateRequired} error={true}>
+                                                            <span>required</span>
+                                                        </FormHelperText>
+                                                    </FormControl>
+                                                    <br /><br />
+
+                                                    <FormControl required>
+                                                        <InputLabel htmlFor='pincode'>Pincode</InputLabel>
+                                                        <Input
+                                                            id='pincode'
+                                                            type='text'
+                                                            pincode={this.state.pincode}
+                                                            value={this.state.pincode}
+                                                            onChange={this.pincodeChangeHandler}
+                                                        />
+                                                        <FormHelperText className={this.state.pincodeRequired} error={true}>
+                                                            <span>required</span>
+                                                        </FormHelperText>
+                                                    </FormControl>
+
+
+                                                </TabContainer>
+                                            }
                                         </div>
                                         : ''
                                     }
