@@ -87,18 +87,23 @@ class Details extends Component {
             }):null
     }
     removeMenuClick=item=>event=>{
+        console.log(this.state.itemAdded)
+        const itemLength = this.state.itemAdded-1
         console.log(this.state.checkoutArr)
         if(item.count === 1){
             let newArr = this.state.checkoutArr.filter(data=>item.id !== data.id && item.category_name !== data.category_name)
-            this.setState({checkoutArr:newArr})
+            const totalPrice = this.state.totalPrice-item.price
+            this.setState({checkoutArr:newArr, totalPrice:totalPrice,open: true, btnClicked:'MINUS', itemAdded: itemLength})
         } else {
             let newArr = [...this.state.checkoutArr]
-            newArr.forEach((data)=>{
+            newArr.forEach((data,index)=>{
                 if(item.id === data.id && item.category_name === data.category_name){
-                    newArr.count = data.count-1
+                    newArr[index].count = data.count-1
+                    newArr[index].totalItemPrice = data.totalItemPrice - data.price
                 }
             })
-            this.setState({checkoutArr:newArr})
+            const totalPrice = this.state.totalPrice-item.price
+            this.setState({checkoutArr:newArr, totalPrice:totalPrice, open: true, btnClicked:'MINUS', itemAdded: itemLength})
         }
     }
     addMenuClick =item=>event => {
@@ -137,6 +142,9 @@ class Details extends Component {
     checkoutHandler=()=>{
         if(this.state.checkoutArr && this.state.checkoutArr.length === 0){
             this.setState({open:true, btnClicked:'CHECKOUT'})
+        } else {
+            console.log(this.state)
+            this.props.history.push({'pathname': '/checkout', state: { chekoutDetails: this.state }})
         }
     }
 
@@ -215,7 +223,10 @@ class Details extends Component {
                         message={<span id="message-id">{
                             this.state.btnClicked === 'ADD' ?
                                 'Item added to cart!' :
-                                this.state.btnClicked === 'CHECKOUT' ?'Please add an item to your cart!':''}</span>}
+                                this.state.btnClicked === 'CHECKOUT' ?
+                                'Please add an item to your cart!':
+                                this.state.btnClicked ==='MINUS' ?
+                            'Item quantity decreased by 1!':''}</span>}
                         action={[
                             <IconButton
                                 key="close"
