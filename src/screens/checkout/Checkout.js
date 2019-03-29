@@ -13,6 +13,12 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 
 const styles = theme => ({
     stepperRoot: {
@@ -31,7 +37,16 @@ const styles = theme => ({
     tabRoot: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
-    }
+    },
+    radioRoot: {
+        display: 'flex',
+    },
+    radioFormControl: {
+        margin: theme.spacing.unit * 3,
+    },
+    radioGroup: {
+        margin: `${theme.spacing.unit}px 0`,
+    },
 });
 
 function getSteps() {
@@ -57,11 +72,28 @@ class Checkout extends Component {
         this.state = {
             activeStep: 0,
             tabValue: 0,
+            paymentModes: [],
+            radioValue: '',
         }
     };
 
     preState = {
         activeStep: 0,
+    };
+
+    componentWillMount() {
+        let that = this;
+        let dataPaymentModes = null;
+        let xhrRestaurants = new XMLHttpRequest();
+        xhrRestaurants.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                that.setState({
+                    paymentModes: JSON.parse(this.responseText).paymentMethods,
+                })
+            }
+        })
+        xhrRestaurants.open('GET', 'http://localhost:8080/api/payment');
+        xhrRestaurants.send(dataPaymentModes);
     };
 
     stepperNextHandler = () => {
@@ -84,13 +116,19 @@ class Checkout extends Component {
 
     tabChangeHandler = (event, value) => {
         this.setState({tabValue: value});
-    }
+    };
+
+    radioChangeHandler = event => {
+        this.setState({radioValue: event.target.value});
+    };
 
     render() {
         const {classes} = this.props;
         const steps = getSteps();
         const {activeStep} = this.state;
         const {tabValue} = this.state;
+
+        console.log(this.state);
 
         return (
             <div>
@@ -117,7 +155,28 @@ class Checkout extends Component {
                                     }
 
                                     {index === 1 ?
-                                        <h4>Options</h4>
+                                        <div className={classes.radioRoot}>
+                                            <FormControl component='fieldset' className={classes.radioFormControl}>
+                                                <FormLabel component='legend'>Select Mode of Payment</FormLabel>
+                                                <RadioGroup
+                                                    aria-label='paymentModes'
+                                                    name='paymentModes'
+                                                    className={classes.radioGroup}
+                                                    value={this.state.radioValue}
+                                                    onChange={this.radioChangeHandler}
+                                                >
+                                                    {this.state.paymentModes.map(paymentMode => (
+                                                        <FormControlLabel
+                                                            key={'paymentMode' + paymentMode.id}
+                                                            value={paymentMode.payment_name.toLowerCase()}
+                                                            control={<Radio />}
+                                                            label={paymentMode.payment_name}
+                                                        />
+                                                    ))}
+                                                </RadioGroup>
+                                            </FormControl>
+                                        </div>
+
                                         : ''
                                     }
 
