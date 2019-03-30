@@ -59,6 +59,7 @@
 
 .display-block {
     display: block;
+    max-width: 194px;
 }
 
 #modal-login-btn,
