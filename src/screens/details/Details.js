@@ -98,6 +98,7 @@ class Details extends Component {
             </div>
         })
     }
+
     getCategoryList = () => {
         let data = this.state.restaurantDetails;
         let dataLength = data.categories && data.categories.length
@@ -110,6 +111,7 @@ class Details extends Component {
                 </div>
             }) : null
     }
+
     removeMenuClick = item => event => {
         console.log(this.state.itemAdded)
         const itemLength = this.state.itemAdded - 1
@@ -130,6 +132,7 @@ class Details extends Component {
             this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'MINUS', itemAdded: itemLength })
         }
     }
+
     addMenuClick = item => event => {
         let selectedItem, newAdded
         let duplicates = this.state.checkoutArr.filter(data => item.id === data.id && item.category_name === data.category_name)
@@ -162,20 +165,26 @@ class Details extends Component {
         }
 
         this.setState({ open: false, btnClicked: '' });
-    };
+    }
+
     checkoutHandler = () => {
         if (this.state.checkoutArr && this.state.checkoutArr.length === 0) {
             this.setState({ open: true, btnClicked: 'CHECKOUT' })
         } else {
             console.log(this.state)
-            this.props.history.push({ 'pathname': '/checkout', state: { chekoutDetails: this.state } })
+            let customerCart = {
+                totalPrice: this.state.totalPrice,
+                cartItems: this.state.checkoutArr
+            };
+            sessionStorage.setItem('customer-cart', JSON.stringify(customerCart));
+            this.props.history.push('/checkout');
         }
     }
 
     render() {
         // const restroData = this.state.restaurantDetails;
         const { photo_URL, restaurant_name, address, customer_rating, average_price, number_customers_rated } = this.state.restaurantDetails;
-        console.log(this.state.restaurantDetails);
+        // console.log(this.state.restaurantDetails);
         return (
             <div>
                 <Header />

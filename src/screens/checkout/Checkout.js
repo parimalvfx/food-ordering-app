@@ -138,6 +138,7 @@ class Checkout extends Component {
             paymentModes: [],
             radioValue: '',
         }
+        console.log(JSON.parse(sessionStorage.getItem('customer-cart')));
     };
 
     preState = {
@@ -344,7 +345,7 @@ class Checkout extends Component {
         const {activeStep} = this.state;
         const {tabValue} = this.state;
 
-        console.log(this.state);
+        // console.log(this.state);
 
         return (
             <div>
