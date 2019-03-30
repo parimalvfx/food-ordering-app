@@ -285,6 +285,8 @@ class Checkout extends Component {
             }
         }
 
+        // add new address
+        let that = this;
         let dataNewAddress = {
             'city': this.state.city,
             'flat_building_name': this.state.flatBuildingNo,
@@ -295,9 +297,21 @@ class Checkout extends Component {
         let xhrNewAddress = new XMLHttpRequest();
         xhrNewAddress.addEventListener('readystatechange', function() {
             if (this.readyState === 4) {
+                let dataCustomerAddress = null;
+                let xhrCustomerAddress = new XMLHttpRequest();
+                xhrCustomerAddress.addEventListener('readystatechange', function() {
+                    if (this.readyState === 4) {
+                        that.setState({
+                            customerExistingAddresses: JSON.parse(this.responseText).addresses,
+                        });
+                    }
+                });
+                xhrCustomerAddress.open('GET', 'http://localhost:8080/api/address/customer');
+                xhrCustomerAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
+                xhrCustomerAddress.send(dataCustomerAddress);
                 window.alert('New address added!');
             }
-        })
+        });
         xhrNewAddress.open('POST', 'http://localhost:8080/api/address');
         xhrNewAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
         xhrNewAddress.setRequestHeader('Content-Type', 'application/json');
