@@ -15,6 +15,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -43,6 +44,7 @@ const styles = theme => ({
     tabRoot: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
+        width: '70%',
     },
     existingAddressTabContainer: {
         float: 'left',
@@ -55,11 +57,17 @@ const styles = theme => ({
     gridList: {
         flexWrap: 'nowrap',
         transform: 'translateZ(0)',
+        overflowY: 'hidden',
     },
     existingAddressGridListTile: {
-        borderStyle: 'solid',
-        borderColor: 'coral',
-        marginRight: '20px',
+        marginBottom: '50px',
+    },
+    existingAddressGridListTileTile: {
+        padding: '25px',
+    },
+    existingAddressCheckCircle: {
+        float: 'right',
+        marginRight: '10px',
     },
     radioRoot: {
         display: 'flex',
@@ -320,10 +328,15 @@ class Checkout extends Component {
                                             {tabValue === 0 &&
                                                 <TabContainer className={classes.existingAddressTabContainer}>
 
-                                                    <GridList className={classes.gridList} cols={3}>
+                                                    <GridList className={classes.gridList} cols={3} cellHeight='auto'>
 
                                                         {this.state.customerExistingAddresses.map(address => (
-                                                            <GridListTile key={'address' + address.id} className={classes.existingAddressGridListTile}>
+                                                            <GridListTile
+                                                                key={'address' + address.id}
+                                                                id={address.city}
+                                                                className={classes.existingAddressGridListTile}
+                                                                classes={{tile: classes.existingAddressGridListTileTile}}
+                                                            >
 
                                                                 {/* existing address - flat/building no */}
                                                                 <Typography variant='subtitle1'>
@@ -349,6 +362,9 @@ class Checkout extends Component {
                                                                 <Typography variant='subtitle1'>
                                                                     {address.pincode}
                                                                 </Typography>
+
+                                                                {/* existing address - check */}
+                                                                <CheckCircleIcon className={classes.existingAddressCheckCircle} nativeColor='grey' />
 
                                                             </GridListTile>
                                                         ))}
