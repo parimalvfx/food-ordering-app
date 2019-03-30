@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './Details.css';
-import dummy from './dummy.js'
 import { withStyles } from '@material-ui/core/styles';
 import Header from '../../common/header/Header';
 import Divider from '@material-ui/core/Divider';
@@ -18,19 +17,45 @@ import Grid from '@material-ui/core/Grid';
 const styles = theme => ({});
 
 class Details extends Component {
-    constructor(props) {
-        super(props)
+    constructor() {
+        super();
         this.state = {
             open: false,
             btnClicked: '',
             checkoutArr: [],
             itemAdded: 0,
-            totalPrice: 0
+            totalPrice: 0,
+            restaurantDetails: {
+                'address': '',
+                'average_price': '',
+                'categories': '',
+                'customer_rating': '',
+                'id': '',
+                'number_customers_rated': '',
+                'photo_URL': '',
+                'restaurant_name': '',
+            },
         }
     }
 
+    componentWillMount() {
+        let that = this;
+        let dataRestaurant = null;
+        let xhrRestaurant = new XMLHttpRequest();
+        xhrRestaurant.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                that.setState({
+                    restaurantDetails: JSON.parse(this.responseText)
+                });
+            }
+        });
+        xhrRestaurant.open('GET', 'http://localhost:8080/api/restaurant/' + this.props.match.params.id);
+        xhrRestaurant.setRequestHeader('Cache-Control', 'no-cache');
+        xhrRestaurant.send(dataRestaurant);
+    }
+
     getCategory = () => {
-        let data = this.props.data || dummy
+        let data = this.state.restaurantDetails;
         let dataLength = data.categories && data.categories.length
         return dataLength > 0 ?
             data.categories.map((item, index) => {
@@ -74,11 +99,11 @@ class Details extends Component {
         })
     }
     getCategoryList = () => {
-        let data = this.props.data || dummy
+        let data = this.state.restaurantDetails;
         let dataLength = data.categories && data.categories.length
         return dataLength > 0 ?
             data.categories.map((item, index) => {
-                return <div className="mt-15">
+                return <div className="mt-15" key={'item' + item.id}>
                     <div>{item.category_name}</div>
                     <Divider className="divider-margin-10" />
                     {this.getEachDish(item.item_list, item.category_name)}
@@ -148,10 +173,11 @@ class Details extends Component {
     }
 
     render() {
-        const restroData = dummy
-        const { photo_URL, restaurant_name, address, customer_rating, average_price, number_customers_rated } = restroData
+        // const restroData = this.state.restaurantDetails;
+        const { photo_URL, restaurant_name, address, customer_rating, average_price, number_customers_rated } = this.state.restaurantDetails;
+        console.log(this.state.restaurantDetails);
         return (
-            <>
+            <div>
                 <Header />
                 <div>
                     <Grid container spacing={24} className="bggrey mobile-text-center" >
@@ -238,7 +264,7 @@ class Details extends Component {
                         ]}
                     />
                 </div>
-            </>
+            </div>
         )
     }
 }
