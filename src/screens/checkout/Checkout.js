@@ -61,6 +61,7 @@ const styles = theme => ({
     },
     existingAddressGridListTile: {
         marginBottom: '50px',
+        cursor: 'pointer',
     },
     existingAddressGridListTileTile: {
         padding: '25px',
@@ -103,6 +104,7 @@ class Checkout extends Component {
         this.state = {
             activeStep: 0,
             tabValue: 0,
+            selectedExistingAddress: '',
             flatBuildingNoRequired: 'display-none',
             flatBuildingNo: '',
             localityRequired: 'display-none',
@@ -115,6 +117,7 @@ class Checkout extends Component {
             pincodeRequiredMsg: 'required',
             pincode: '',
             customerExistingAddresses: [],
+            customerExistingAddressesSelection: [],
             states: [],
             paymentModes: [],
             radioValue: '',
@@ -189,6 +192,14 @@ class Checkout extends Component {
 
     tabChangeHandler = (event, value) => {
         this.setState({tabValue: value});
+    };
+
+    existingAddressOnClickHandler = (addressId) => {
+        this.setState({
+            [this.state.selectedExistingAddress]: 'unselect-address',
+            selectedExistingAddress: addressId,
+            [addressId]: 'select-address',
+        });
     };
 
     flatBuildingNoChangeHandler = event => {
@@ -331,9 +342,11 @@ class Checkout extends Component {
                                                     <GridList className={classes.gridList} cols={3} cellHeight='auto'>
 
                                                         {this.state.customerExistingAddresses.map(address => (
+
                                                             <GridListTile
                                                                 key={'address' + address.id}
-                                                                id={address.city}
+                                                                id={this.state[address.id] || 'unselect-address'}
+                                                                onClick={() => this.existingAddressOnClickHandler(address.id)}
                                                                 className={classes.existingAddressGridListTile}
                                                                 classes={{tile: classes.existingAddressGridListTileTile}}
                                                             >
@@ -364,7 +377,10 @@ class Checkout extends Component {
                                                                 </Typography>
 
                                                                 {/* existing address - check */}
-                                                                <CheckCircleIcon className={classes.existingAddressCheckCircle} nativeColor='grey' />
+                                                                <CheckCircleIcon
+                                                                    className={classes.existingAddressCheckCircle}
+                                                                    nativeColor={this.state[address.id] === 'select-address' ? 'green' : 'grey'}
+                                                                />
 
                                                             </GridListTile>
                                                         ))}
