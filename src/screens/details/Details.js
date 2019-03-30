@@ -173,8 +173,9 @@ class Details extends Component {
         } else {
             console.log(this.state)
             let customerCart = {
-                totalPrice: this.state.totalPrice,
-                cartItems: this.state.checkoutArr
+                restaurantDetails: this.state.restaurantDetails,
+                cartItems: this.state.checkoutArr,
+                totalPrice: this.state.totalPrice
             };
             sessionStorage.setItem('customer-cart', JSON.stringify(customerCart));
             this.props.history.push('/checkout');

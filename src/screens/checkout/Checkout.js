@@ -118,6 +118,7 @@ class Checkout extends Component {
     constructor() {
         super();
         this.state = {
+            customerCart: JSON.parse(sessionStorage.getItem('customer-cart')),
             activeStep: 0,
             tabValue: 0,
             selectedExistingAddress: '',
@@ -598,24 +599,18 @@ class Checkout extends Component {
 
                                 {/* summary - restaurant name */}
                                 <Typography variant='h6' color='textSecondary' gutterBottom>
-                                    Loud Silence
+                                    {this.state.customerCart.restaurantDetails.restaurant_name}
                                 </Typography>
 
-                                <div id='tmp1' className="flex width-100 pd-1-per">
-                                    <div className="width-10"><i className='fa fa-stop-circle-o non-veg'></i></div>
-                                    <div className="width-40 capital checkout-grey-color">Hakka Noodles</div>
-                                    <div className="width-10 checkout-grey-color">2</div>
-                                    <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
-                                    <div className="width-10 checkout-grey-color">408.00</div>
-                                </div>
-
-                                <div id='tmp2' className="flex width-100 pd-1-per">
-                                    <div className="width-10"><i className='fa fa-stop-circle-o veg'></i></div>
-                                    <div className="width-40 capital checkout-grey-color">Portuguese Salad</div>
-                                    <div className="width-10 checkout-grey-color">1</div>
-                                    <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
-                                    <div className="width-10 checkout-grey-color">245.00</div>
-                                </div>
+                                {this.state.customerCart.cartItems.map(item => (
+                                    <div key={'item' + item.id} className="flex width-100 pd-1-per">
+                                        <div className="width-10"><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
+                                        <div className="width-40 capital checkout-grey-color">{item.item_name}</div>
+                                        <div className="width-10 checkout-grey-color">{item.count}</div>
+                                        <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
+                                        <div className="width-10 checkout-grey-color">{item.totalItemPrice}</div>
+                                    </div>
+                                ))}
 
                                 <Divider />
 
@@ -629,7 +624,7 @@ class Checkout extends Component {
                                         <span className="width-5 checkout-grey-color">
                                             <i className='fa fa-inr'></i>
                                         </span>
-                                        653.00
+                                        {this.state.customerCart.totalPrice}
                                     </span>
                                 </div>
 
