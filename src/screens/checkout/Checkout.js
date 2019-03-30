@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './Checkout.css';
 import { withStyles } from '@material-ui/core/styles';
 import Header from '../../common/header/Header';
+import Grid from '@material-ui/core/Grid';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -26,10 +27,13 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Divider from '@material-ui/core/Divider';
 
 const styles = theme => ({
     stepperRoot: {
-        width: '90%',
+        // width: '90%',
     },
     button: {
         marginTop: theme.spacing.unit,
@@ -44,7 +48,6 @@ const styles = theme => ({
     tabRoot: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
-        width: '70%',
     },
     existingAddressTabContainer: {
         float: 'left',
@@ -78,6 +81,19 @@ const styles = theme => ({
     },
     radioGroup: {
         margin: `${theme.spacing.unit}px 0`,
+    },
+    summaryCard: {
+        // float: 'right',
+        // marginLeft: '10px',
+        marginRight: '15px',
+        marginTop: '25px',
+        // width: '360px',
+    },
+    placeOrderButton: {
+        // width: '100%'
+    },
+    stepperGridItem: {
+        // width: '70%',
     },
 });
 
@@ -334,238 +350,298 @@ class Checkout extends Component {
             <div>
                 <Header />
 
-                <div className={classes.stepperRoot}>
-                    <Stepper activeStep={activeStep} orientation='vertical'>
-                        {steps.map((label, index) => (
-                            <Step key={label}>
-                                <StepLabel>{label}</StepLabel>
-                                <StepContent>
-                                    {index === 0 ?
-                                        <div className={classes.tabRoot}>
-                                            <AppBar position='static'>
-                                                <Tabs value={tabValue} onChange={this.tabChangeHandler}>
-                                                    <Tab label='EXISTING ADDRESS'/>
-                                                    <Tab label='NEW ADDRESS'/>
-                                                </Tabs>
-                                            </AppBar>
+                <Grid container={true} >
+                    <Grid item={true} xs={9} className={classes.stepperGridItem}>
+                        <div className={classes.stepperRoot}>
+                            <Stepper activeStep={activeStep} orientation='vertical'>
+                                {steps.map((label, index) => (
+                                    <Step key={label}>
+                                        <StepLabel>{label}</StepLabel>
+                                        <StepContent>
+                                            {index === 0 ?
+                                                <div className={classes.tabRoot}>
+                                                    <AppBar position='static'>
+                                                        <Tabs value={tabValue} onChange={this.tabChangeHandler}>
+                                                            <Tab label='EXISTING ADDRESS'/>
+                                                            <Tab label='NEW ADDRESS'/>
+                                                        </Tabs>
+                                                    </AppBar>
 
-                                            {/* existing address */}
-                                            {tabValue === 0 &&
-                                                <TabContainer className={classes.existingAddressTabContainer}>
+                                                    {/* existing address */}
+                                                    {tabValue === 0 &&
+                                                        <TabContainer className={classes.existingAddressTabContainer}>
 
-                                                    <GridList className={classes.gridList} cols={3} cellHeight='auto'>
+                                                            <GridList className={classes.gridList} cols={3} cellHeight='auto'>
 
-                                                        {this.state.customerExistingAddresses.map(address => (
+                                                                {this.state.customerExistingAddresses.map(address => (
 
-                                                            <GridListTile
-                                                                key={'address' + address.id}
-                                                                id={this.state[address.id] || 'unselect-address'}
-                                                                onClick={() => this.existingAddressOnClickHandler(address.id)}
-                                                                className={classes.existingAddressGridListTile}
-                                                                classes={{tile: classes.existingAddressGridListTileTile}}
-                                                            >
+                                                                    <GridListTile
+                                                                        key={'address' + address.id}
+                                                                        id={this.state[address.id] || 'unselect-address'}
+                                                                        onClick={() => this.existingAddressOnClickHandler(address.id)}
+                                                                        className={classes.existingAddressGridListTile}
+                                                                        classes={{tile: classes.existingAddressGridListTileTile}}
+                                                                    >
 
-                                                                {/* existing address - flat/building no */}
-                                                                <Typography variant='subtitle1'>
-                                                                    {address.flat_building_name}
-                                                                </Typography>
+                                                                        {/* existing address - flat/building no */}
+                                                                        <Typography variant='subtitle1'>
+                                                                            {address.flat_building_name}
+                                                                        </Typography>
 
-                                                                {/* existing address - locality */}
-                                                                <Typography variant='subtitle1'>
-                                                                    {address.locality}
-                                                                </Typography>
+                                                                        {/* existing address - locality */}
+                                                                        <Typography variant='subtitle1'>
+                                                                            {address.locality}
+                                                                        </Typography>
 
-                                                                {/* existing address - city */}
-                                                                <Typography variant='subtitle1'>
-                                                                    {address.city}
-                                                                </Typography>
+                                                                        {/* existing address - city */}
+                                                                        <Typography variant='subtitle1'>
+                                                                            {address.city}
+                                                                        </Typography>
 
-                                                                {/* existing address - state */}
-                                                                <Typography variant='subtitle1'>
-                                                                    {address.state.state_name}
-                                                                </Typography>
+                                                                        {/* existing address - state */}
+                                                                        <Typography variant='subtitle1'>
+                                                                            {address.state.state_name}
+                                                                        </Typography>
 
-                                                                {/* existing address - pincode */}
-                                                                <Typography variant='subtitle1'>
-                                                                    {address.pincode}
-                                                                </Typography>
+                                                                        {/* existing address - pincode */}
+                                                                        <Typography variant='subtitle1'>
+                                                                            {address.pincode}
+                                                                        </Typography>
 
-                                                                {/* existing address - check */}
-                                                                <CheckCircleIcon
-                                                                    className={classes.existingAddressCheckCircle}
-                                                                    nativeColor={this.state[address.id] === 'select-address' ? 'green' : 'grey'}
+                                                                        {/* existing address - check */}
+                                                                        <CheckCircleIcon
+                                                                            className={classes.existingAddressCheckCircle}
+                                                                            nativeColor={this.state[address.id] === 'select-address' ? 'green' : 'grey'}
+                                                                        />
+
+                                                                    </GridListTile>
+                                                                ))}
+
+                                                            </GridList>
+
+                                                        </TabContainer>
+                                                    }
+
+                                                    {/* new address */}
+                                                    {tabValue === 1 &&
+                                                        <TabContainer>
+
+                                                            {/* new address - flat/building no */}
+                                                            <FormControl required>
+                                                                <InputLabel htmlFor='flatBuildingNo'>Flat / Building No.</InputLabel>
+                                                                <Input
+                                                                    id='flatBuildingNo'
+                                                                    type='text'
+                                                                    flatbuildingno={this.state.flatBuildingNo}
+                                                                    value={this.state.flatBuildingNo}
+                                                                    onChange={this.flatBuildingNoChangeHandler}
                                                                 />
+                                                                <FormHelperText className={this.state.flatBuildingNoRequired} error={true}>
+                                                                    <span>required</span>
+                                                                </FormHelperText>
+                                                            </FormControl>
+                                                            <br /><br />
 
-                                                            </GridListTile>
-                                                        ))}
+                                                            {/* new address - locality */}
+                                                            <FormControl required>
+                                                                <InputLabel htmlFor='locality'>Locality</InputLabel>
+                                                                <Input
+                                                                    id='locality'
+                                                                    type='text'
+                                                                    locality={this.state.locality}
+                                                                    value={this.state.locality}
+                                                                    onChange={this.localityChangeHandler}
+                                                                />
+                                                                <FormHelperText className={this.state.localityRequired} error={true}>
+                                                                    <span>required</span>
+                                                                </FormHelperText>
+                                                            </FormControl>
+                                                            <br /><br />
 
-                                                    </GridList>
+                                                            {/* new address - city */}
+                                                            <FormControl required>
+                                                                <InputLabel htmlFor='city'>City</InputLabel>
+                                                                <Input
+                                                                    id='city'
+                                                                    type='text'
+                                                                    city={this.state.city}
+                                                                    value={this.state.city}
+                                                                    onChange={this.cityChangeHandler}
+                                                                />
+                                                                <FormHelperText className={this.state.cityRequired} error={true}>
+                                                                    <span>required</span>
+                                                                </FormHelperText>
+                                                            </FormControl>
+                                                            <br /><br />
 
-                                                </TabContainer>
+                                                            {/* new address - state */}
+                                                            <FormControl required className={classes.newAddressFormControl}>
+                                                                <InputLabel htmlFor='newAddressstate'>State</InputLabel>
+                                                                <Select
+                                                                    id='newAddressstate'
+                                                                    newaddressstate={this.state.newAddressState}
+                                                                    value={this.state.newAddressState}
+                                                                    onChange={this.stateChangeHandler}
+                                                                >
+                                                                    {this.state.states.map(state => (
+                                                                        <MenuItem key={'state' + state.id} value={state.state_name}>
+                                                                            {state.state_name}
+                                                                        </MenuItem>
+                                                                    ))}
+                                                                </Select>
+                                                                <FormHelperText className={this.state.stateRequired} error={true}>
+                                                                    <span>required</span>
+                                                                </FormHelperText>
+                                                            </FormControl>
+                                                            <br /><br />
+
+                                                            {/* new address - pincode */}
+                                                            <FormControl required>
+                                                                <InputLabel htmlFor='pincode'>Pincode</InputLabel>
+                                                                <Input
+                                                                    id='pincode'
+                                                                    type='text'
+                                                                    pincode={this.state.pincode}
+                                                                    value={this.state.pincode}
+                                                                    onChange={this.pincodeChangeHandler}
+                                                                />
+                                                                <FormHelperText className={this.state.pincodeRequired} error={true}>
+                                                                    <span>{this.state.pincodeRequiredMsg}</span>
+                                                                </FormHelperText>
+                                                            </FormControl>
+                                                            <br /><br />
+
+                                                            <Button
+                                                                variant='contained'
+                                                                color='secondary'
+                                                                onClick={this.saveAddressOnClickHandler}
+                                                            >
+                                                                Save Address
+                                                            </Button>
+                                                        </TabContainer>
+                                                    }
+                                                </div>
+                                                : ''
                                             }
 
-                                            {/* new address */}
-                                            {tabValue === 1 &&
-                                                <TabContainer>
-
-                                                    {/* new address - flat/building no */}
-                                                    <FormControl required>
-                                                        <InputLabel htmlFor='flatBuildingNo'>Flat / Building No.</InputLabel>
-                                                        <Input
-                                                            id='flatBuildingNo'
-                                                            type='text'
-                                                            flatbuildingno={this.state.flatBuildingNo}
-                                                            value={this.state.flatBuildingNo}
-                                                            onChange={this.flatBuildingNoChangeHandler}
-                                                        />
-                                                        <FormHelperText className={this.state.flatBuildingNoRequired} error={true}>
-                                                            <span>required</span>
-                                                        </FormHelperText>
-                                                    </FormControl>
-                                                    <br /><br />
-
-                                                    {/* new address - locality */}
-                                                    <FormControl required>
-                                                        <InputLabel htmlFor='locality'>Locality</InputLabel>
-                                                        <Input
-                                                            id='locality'
-                                                            type='text'
-                                                            locality={this.state.locality}
-                                                            value={this.state.locality}
-                                                            onChange={this.localityChangeHandler}
-                                                        />
-                                                        <FormHelperText className={this.state.localityRequired} error={true}>
-                                                            <span>required</span>
-                                                        </FormHelperText>
-                                                    </FormControl>
-                                                    <br /><br />
-
-                                                    {/* new address - city */}
-                                                    <FormControl required>
-                                                        <InputLabel htmlFor='city'>City</InputLabel>
-                                                        <Input
-                                                            id='city'
-                                                            type='text'
-                                                            city={this.state.city}
-                                                            value={this.state.city}
-                                                            onChange={this.cityChangeHandler}
-                                                        />
-                                                        <FormHelperText className={this.state.cityRequired} error={true}>
-                                                            <span>required</span>
-                                                        </FormHelperText>
-                                                    </FormControl>
-                                                    <br /><br />
-
-                                                    {/* new address - state */}
-                                                    <FormControl required className={classes.newAddressFormControl}>
-                                                        <InputLabel htmlFor='newAddressstate'>State</InputLabel>
-                                                        <Select
-                                                            id='newAddressstate'
-                                                            newaddressstate={this.state.newAddressState}
-                                                            value={this.state.newAddressState}
-                                                            onChange={this.stateChangeHandler}
+                                            {index === 1 ?
+                                                <div className={classes.radioRoot}>
+                                                    <FormControl component='fieldset' className={classes.radioFormControl}>
+                                                        <FormLabel component='legend'>Select Mode of Payment</FormLabel>
+                                                        <RadioGroup
+                                                            aria-label='paymentModes'
+                                                            name='paymentModes'
+                                                            className={classes.radioGroup}
+                                                            value={this.state.radioValue}
+                                                            onChange={this.radioChangeHandler}
                                                         >
-                                                            {this.state.states.map(state => (
-                                                                <MenuItem key={'state' + state.id} value={state.state_name}>
-                                                                    {state.state_name}
-                                                                </MenuItem>
+                                                            {this.state.paymentModes.map(paymentMode => (
+                                                                <FormControlLabel
+                                                                    key={'paymentMode' + paymentMode.id}
+                                                                    value={paymentMode.payment_name.toLowerCase()}
+                                                                    control={<Radio />}
+                                                                    label={paymentMode.payment_name}
+                                                                />
                                                             ))}
-                                                        </Select>
-                                                        <FormHelperText className={this.state.stateRequired} error={true}>
-                                                            <span>required</span>
-                                                        </FormHelperText>
+                                                        </RadioGroup>
                                                     </FormControl>
-                                                    <br /><br />
+                                                </div>
 
-                                                    {/* new address - pincode */}
-                                                    <FormControl required>
-                                                        <InputLabel htmlFor='pincode'>Pincode</InputLabel>
-                                                        <Input
-                                                            id='pincode'
-                                                            type='text'
-                                                            pincode={this.state.pincode}
-                                                            value={this.state.pincode}
-                                                            onChange={this.pincodeChangeHandler}
-                                                        />
-                                                        <FormHelperText className={this.state.pincodeRequired} error={true}>
-                                                            <span>{this.state.pincodeRequiredMsg}</span>
-                                                        </FormHelperText>
-                                                    </FormControl>
-                                                    <br /><br />
+                                                : ''
+                                            }
 
+                                            <div className={classes.actionsContainer}>
+                                                <div>
+                                                    <Button
+                                                        disabled={activeStep === 0}
+                                                        onClick={this.stepperBackHandler}
+                                                        className={classes.button}
+                                                    >
+                                                        Back
+                                                    </Button>
                                                     <Button
                                                         variant='contained'
-                                                        color='secondary'
-                                                        onClick={this.saveAddressOnClickHandler}
+                                                        color='primary'
+                                                        onClick={this.stepperNextHandler}
+                                                        className={classes.button}
                                                     >
-                                                        Save Address
+                                                        {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                                                     </Button>
-                                                </TabContainer>
-                                            }
-                                        </div>
-                                        : ''
-                                    }
+                                                </div>
+                                            </div>
+                                        </StepContent>
+                                    </Step>
+                                ))}
+                            </Stepper>
+                            {activeStep === steps.length && (
+                                <Paper square elevation={0} className={classes.resetContainer}>
+                                    <Typography variant='h6'>
+                                        View the summary &#38; place your order now!
+                                    </Typography>
+                                    <Button onClick={this.stepperResetHandler} className={classes.button}>
+                                        CHANGE
+                                    </Button>
+                                </Paper>
+                            )}
+                        </div>
+                    </Grid>
 
-                                    {index === 1 ?
-                                        <div className={classes.radioRoot}>
-                                            <FormControl component='fieldset' className={classes.radioFormControl}>
-                                                <FormLabel component='legend'>Select Mode of Payment</FormLabel>
-                                                <RadioGroup
-                                                    aria-label='paymentModes'
-                                                    name='paymentModes'
-                                                    className={classes.radioGroup}
-                                                    value={this.state.radioValue}
-                                                    onChange={this.radioChangeHandler}
-                                                >
-                                                    {this.state.paymentModes.map(paymentMode => (
-                                                        <FormControlLabel
-                                                            key={'paymentMode' + paymentMode.id}
-                                                            value={paymentMode.payment_name.toLowerCase()}
-                                                            control={<Radio />}
-                                                            label={paymentMode.payment_name}
-                                                        />
-                                                    ))}
-                                                </RadioGroup>
-                                            </FormControl>
-                                        </div>
+                    {/* cart summary */}
+                    <Grid item={true} xs>
+                        <Card className={classes.summaryCard}>
+                            <CardContent>
+                                <Typography variant='h5'>
+                                    Summary
+                                </Typography>
+                                <br />
 
-                                        : ''
-                                    }
+                                {/* summary - restaurant name */}
+                                <Typography variant='h6' color='textSecondary' gutterBottom>
+                                    Loud Silence
+                                </Typography>
 
-                                    <div className={classes.actionsContainer}>
-                                        <div>
-                                            <Button
-                                                disabled={activeStep === 0}
-                                                onClick={this.stepperBackHandler}
-                                                className={classes.button}
-                                            >
-                                                Back
-                                            </Button>
-                                            <Button
-                                                variant='contained'
-                                                color='primary'
-                                                onClick={this.stepperNextHandler}
-                                                className={classes.button}
-                                            >
-                                                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </StepContent>
-                            </Step>
-                        ))}
-                    </Stepper>
-                    {activeStep === steps.length && (
-                        <Paper square elevation={0} className={classes.resetContainer}>
-                            <Typography variant='h6'>
-                                View the summary &#38; place your order now!
-                            </Typography>
-                            <Button onClick={this.stepperResetHandler} className={classes.button}>
-                                CHANGE
-                            </Button>
-                        </Paper>
-                    )}
-                </div>
+                                <div id='tmp1' className="flex width-100 pd-1-per">
+                                    <div className="width-10"><i className='fa fa-stop-circle-o non-veg'></i></div>
+                                    <div className="width-40 capital checkout-grey-color">Hakka Noodles</div>
+                                    <div className="width-10 checkout-grey-color">2</div>
+                                    <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
+                                    <div className="width-10 checkout-grey-color">408.00</div>
+                                </div>
+
+                                <div id='tmp2' className="flex width-100 pd-1-per">
+                                    <div className="width-10"><i className='fa fa-stop-circle-o veg'></i></div>
+                                    <div className="width-40 capital checkout-grey-color">Portuguese Salad</div>
+                                    <div className="width-10 checkout-grey-color">1</div>
+                                    <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
+                                    <div className="width-10 checkout-grey-color">245.00</div>
+                                </div>
+
+                                <Divider />
+
+                                {/* summary - net amount */}
+                                {/* <Typography variant='subtitle2' gutterBottom>
+                                    Net Amount
+                                </Typography>
+                                <div  className="width-10 checkout-grey-color"><i className='fa fa-inr'></i> 653.00</div> */}
+                                <div className="pd-1-per">Net Amount 
+                                    <span className="right mr-8">
+                                        <span className="width-5 checkout-grey-color">
+                                            <i className='fa fa-inr'></i>
+                                        </span>
+                                        653.00
+                                    </span>
+                                </div>
+
+
+                                {/* summary - place order */}
+                                <Button variant='contained' color='primary' className={classes.placeOrderButton} fullWidth={true}>
+                                    Place Order
+                                </Button>
+
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                </Grid>
             </div>
         );
     }
