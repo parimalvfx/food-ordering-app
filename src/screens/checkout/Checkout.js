@@ -543,7 +543,9 @@ class Checkout extends Component {
                     </Stepper>
                     {activeStep === steps.length && (
                         <Paper square elevation={0} className={classes.resetContainer}>
-                            <Typography>View the summary &#38; place your order now</Typography>
+                            <Typography variant='h6'>
+                                View the summary &#38; place your order now!
+                            </Typography>
                             <Button onClick={this.stepperResetHandler} className={classes.button}>
                                 CHANGE
                             </Button>
