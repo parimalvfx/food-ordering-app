@@ -135,7 +135,6 @@ class Checkout extends Component {
             pincodeRequiredMsg: 'required',
             pincode: '',
             customerExistingAddresses: [],
-            customerExistingAddressesSelection: [],
             states: [],
             paymentModes: [],
             radioValue: '',
@@ -298,7 +297,8 @@ class Checkout extends Component {
             this.setState({
                 pincodeRequired: 'display-block',
                 pincodeRequiredMsg: 'Pincode must contain only numbers and must be 6 digits long'
-            })
+            });
+            return;
         }
 
         if (flatBuildingNoReq || localityReq || cityReq || stateReq || pincodeReq) {
@@ -439,55 +439,60 @@ class Checkout extends Component {
                                                     {/* existing address */}
                                                     {tabValue === 0 &&
                                                         <TabContainer className={classes.existingAddressTabContainer}>
+                                                            {this.state.customerExistingAddresses === null ?
+                                                                <Typography variant='h6' color='textSecondary'>
+                                                                    There are no saved addresses! You can save an address using the 'New Address' tab or using your 'Profile' menu option.
+                                                                </Typography>
+                                                                :
+                                                                <GridList
+                                                                    className={classes.gridList}
+                                                                    cols={3}
+                                                                    cellHeight='auto'
+                                                                >
+                                                                    {this.state.customerExistingAddresses.map(address => (
+                                                                        <GridListTile
+                                                                            key={'address' + address.id}
+                                                                            id={this.state[address.id] || 'unselect-address'}
+                                                                            onClick={() => this.existingAddressOnClickHandler(address.id)}
+                                                                            className={classes.existingAddressGridListTile}
+                                                                            classes={{tile: classes.existingAddressGridListTileTile}}
+                                                                        >
 
-                                                            <GridList className={classes.gridList} cols={3} cellHeight='auto'>
+                                                                            {/* existing address - flat/building no */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.flat_building_name}
+                                                                            </Typography>
 
-                                                                {this.state.customerExistingAddresses.map(address => (
+                                                                            {/* existing address - locality */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.locality}
+                                                                            </Typography>
 
-                                                                    <GridListTile
-                                                                        key={'address' + address.id}
-                                                                        id={this.state[address.id] || 'unselect-address'}
-                                                                        onClick={() => this.existingAddressOnClickHandler(address.id)}
-                                                                        className={classes.existingAddressGridListTile}
-                                                                        classes={{tile: classes.existingAddressGridListTileTile}}
-                                                                    >
+                                                                            {/* existing address - city */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.city}
+                                                                            </Typography>
 
-                                                                        {/* existing address - flat/building no */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.flat_building_name}
-                                                                        </Typography>
+                                                                            {/* existing address - state */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.state.state_name}
+                                                                            </Typography>
 
-                                                                        {/* existing address - locality */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.locality}
-                                                                        </Typography>
+                                                                            {/* existing address - pincode */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.pincode}
+                                                                            </Typography>
 
-                                                                        {/* existing address - city */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.city}
-                                                                        </Typography>
+                                                                            {/* existing address - check */}
+                                                                            <CheckCircleIcon
+                                                                                className={classes.existingAddressCheckCircle}
+                                                                                nativeColor={this.state[address.id] === 'select-address' ? 'green' : 'grey'}
+                                                                            />
 
-                                                                        {/* existing address - state */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.state.state_name}
-                                                                        </Typography>
-
-                                                                        {/* existing address - pincode */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.pincode}
-                                                                        </Typography>
-
-                                                                        {/* existing address - check */}
-                                                                        <CheckCircleIcon
-                                                                            className={classes.existingAddressCheckCircle}
-                                                                            nativeColor={this.state[address.id] === 'select-address' ? 'green' : 'grey'}
-                                                                        />
-
-                                                                    </GridListTile>
-                                                                ))}
-
-                                                            </GridList>
-
+                                                                        </GridListTile>
+                                                                    ))}
+                                                                </GridList>
+                                                            }
                                                         </TabContainer>
                                                     }
 
