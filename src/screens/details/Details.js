@@ -48,7 +48,7 @@ class Details extends Component {
         xhrRestaurant.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 that.setState({
-                    restaurantDetails: JSON.parse(this.responseText)
+                    restaurantDetails: JSON.parse(this.responseText),
                 });
             }
         });
@@ -72,7 +72,7 @@ class Details extends Component {
             return <div className="flex pd-1-per" key={index}>
                 <div className="flex-5"><i className={item.item_type === 'NON_VEG' ? 'fa fa-circle non-veg' : 'fa fa-circle veg'}></i></div>
                 <div className="flex-75">{item.item_name}</div>
-                <div className="flex-10"><i className='fa fa-inr'></i> {item.price}</div>
+                <div className="flex-10"><i className='fa fa-inr'></i> {item.price}.00</div>
                 <div className="flex-10 plus-btn">
                     <IconButton aria-label="Add" style={{ padding: '1px' }} onClick={this.addMenuClick(item, 'ADD')}>
                         <AddIcon />
@@ -87,7 +87,7 @@ class Details extends Component {
             return <div className="flex width-100 pd-1-per" key={index}>
                 <div className="width-5"><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
                 <div className="width-40 capital checkout-grey-color">{item.item_name}</div>
-                <div className="width-45">
+                <div className="width-40">
                     <IconButton aria-label="AddIcon" className="btn-hover" style={{ padding: '1px' }} onClick={this.removeMenuClick(item)}>
                         <div className="minus-icon"> - </div>
                     </IconButton>
@@ -96,7 +96,8 @@ class Details extends Component {
                         <AddIcon className="black-color" />
                     </IconButton>
                 </div>
-                <div className="width-10 checkout-grey-color"><i className='fa fa-inr'></i> {item.totalItemPrice}</div>
+                <div className="width-2-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
+                <div className='checkout-grey-color'> {item.totalItemPrice}.00</div>
             </div>
         })
     }
@@ -241,7 +242,7 @@ class Details extends Component {
                                     </Typography>
 
                                     {this.getCheckoutDishList(this.state.checkoutArr)}
-                                    <div className="bold pd-1-per">TOTAL AMOUNT <span className="right mr-8"><i className='fa fa-inr'></i> {this.state.totalPrice}</span></div>
+                                    <div className="bold pd-1-per">TOTAL AMOUNT <span className="right mr-8"><i className='fa fa-inr'></i> {this.state.totalPrice}.00</span></div>
                                     <Button className="mt-24-px" variant="contained" fullWidth size="medium" color="primary" onClick={this.checkoutHandler}>
                                         CHECKOUT
                                 </Button>

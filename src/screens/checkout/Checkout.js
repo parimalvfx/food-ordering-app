@@ -687,7 +687,7 @@ class Checkout extends Component {
                                         <div className='width-50 capital checkout-grey-color'>{item.item_name}</div>
                                         <div className='width-25 checkout-grey-color'>{item.count}</div>
                                         <div className='width-4 checkout-grey-color'><i className='fa fa-inr'></i></div>
-                                        <div className='checkout-grey-color'>{item.totalItemPrice}</div>
+                                        <div className='checkout-grey-color'>{item.totalItemPrice}.00</div>
                                     </div>
                                 ))}
 
@@ -696,11 +696,11 @@ class Checkout extends Component {
                                 {/* summary - net amount */}
                                 <div className={classes.netAmount}>
                                     Net Amount
-                                    <span className='right mr-8p'>
-                                        <span className='width-5 checkout-grey-color'>
+                                    <span className='right'>
+                                        <span className='width-5 checkout-grey-color mr-2'>
                                             <i className='fa fa-inr'></i>
                                         </span>
-                                        {this.state.customerCart.totalPrice}
+                                        {this.state.customerCart.totalPrice}.00
                                     </span>
                                 </div>
 
