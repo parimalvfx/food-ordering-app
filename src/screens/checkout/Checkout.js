@@ -74,6 +74,9 @@ const styles = theme => ({
         float: 'right',
         marginRight: '10px',
     },
+    newAddressStateSelect: {
+        width: '194px',
+    },
     radioRoot: {
         display: 'flex',
     },
@@ -98,9 +101,18 @@ const styles = theme => ({
     },
 });
 
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: 48 * 4 + 8,
+            width: 250,
+        },
+    },
+};
+
 function getSteps() {
     return ['Delivery', 'Payment'];
-}
+};
 
 function TabContainer(props) {
     return (
@@ -108,7 +120,7 @@ function TabContainer(props) {
             {props.children}
         </Typography>
     )
-}
+};
 
 TabContainer.propTypes = {
     children: PropTypes.node.isRequired,
@@ -556,6 +568,8 @@ class Checkout extends Component {
                                                                     newaddressstate={this.state.newAddressState}
                                                                     value={this.state.newAddressState}
                                                                     onChange={this.stateChangeHandler}
+                                                                    className={classes.newAddressStateSelect}
+                                                                    MenuProps={MenuProps}
                                                                 >
                                                                     {this.state.states.map(state => (
                                                                         <MenuItem key={'state' + state.id} value={state.state_name}>
