@@ -119,7 +119,7 @@ class Details extends Component {
         if (item.count === 1) {
             let newArr = this.state.checkoutArr.filter(data => item.id !== data.id && item.category_name !== data.category_name)
             const totalPrice = this.state.totalPrice - item.price;
-            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'MINUS', itemAdded: itemLength });
+            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'REMOVE', itemAdded: itemLength });
         } else {
             let newArr = [...this.state.checkoutArr];
             newArr.forEach((data, index) => {
@@ -129,7 +129,7 @@ class Details extends Component {
                 }
             })
             const totalPrice = this.state.totalPrice - item.price;
-            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'MINUS', itemAdded: itemLength });
+            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'DECREMENT', itemAdded: itemLength });
         }
     }
 
@@ -236,7 +236,7 @@ class Details extends Component {
                                     </Typography>
 
                                     {this.getCheckoutDishList(this.state.checkoutArr)}
-                                    <div className="bold pd-1-per">Total Amount <span className="right mr-8"><i className='fa fa-inr'></i> {this.state.totalPrice}</span></div>
+                                    <div className="bold pd-1-per">TOTAL AMOUNT <span className="right mr-8"><i className='fa fa-inr'></i> {this.state.totalPrice}</span></div>
                                     <Button className="mt-24-px" variant="contained" fullWidth size="medium" color="primary" onClick={this.checkoutHandler}>
                                         CHECKOUT
                                 </Button>
@@ -264,8 +264,10 @@ class Details extends Component {
                                         'Item added to cart!' :
                                         this.state.btnClicked === 'INCREMENT' ?
                                             'Item quantity increased by 1!' :
-                                            this.state.btnClicked === 'MINUS' ?
-                                                'Item removed from cart!' : ''}</span>}
+                                            this.state.btnClicked === 'REMOVE' ?
+                                                'Item removed from cart!' :
+                                                this.state.btnClicked === 'DECREMENT' ?
+                                                    'Item quantity decreased by 1!' : ''}</span>}
                         action={[
                             <IconButton
                                 key="close"
