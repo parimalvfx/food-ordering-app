@@ -682,7 +682,7 @@ class Checkout extends Component {
                                 </Typography>
 
                                 {this.state.customerCart.cartItems.map(item => (
-                                    <div key={'item' + item.id} className='flex width-100 pd-1-per'>
+                                    <div key={'item' + item.id + item.category_name} className='flex width-100 pd-1-per'>
                                         <div className='width-10'><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
                                         <div className='width-50 capital checkout-grey-color'>{item.item_name}</div>
                                         <div className='width-25 checkout-grey-color'>{item.count}</div>

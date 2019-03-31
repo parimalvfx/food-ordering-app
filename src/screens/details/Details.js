@@ -117,7 +117,12 @@ class Details extends Component {
     removeMenuClick = item => event => {
         const itemLength = this.state.itemAdded - 1;
         if (item.count === 1) {
-            let newArr = this.state.checkoutArr.filter(data => item.id !== data.id && item.category_name !== data.category_name)
+            let newArr = [...this.state.checkoutArr];
+            newArr.forEach((data, index) => {
+                if (item.id === data.id && item.category_name === data.category_name) {
+                    newArr.splice(index, 1);
+                }
+            });
             const totalPrice = this.state.totalPrice - item.price;
             this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'REMOVE', itemAdded: itemLength });
         } else {
