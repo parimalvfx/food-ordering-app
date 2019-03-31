@@ -66,10 +66,11 @@ class Home extends Component {
     }
 
     componentWillMount() {
+        // get restaurants from api
         let that = this;
         let dataRestaurants = null;
         let xhrRestaurants = new XMLHttpRequest();
-        xhrRestaurants.addEventListener('readystatechange', function() {
+        xhrRestaurants.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 that.setState({
                     restaurants: JSON.parse(this.responseText).restaurants
@@ -92,21 +93,21 @@ class Home extends Component {
 
     updateCardsGridListCols = () => {
         if (window.innerWidth >= 1530) {
-            this.setState({cards: 5});
+            this.setState({ cards: 5 });
             return;
         }
 
         if (window.innerWidth >= 1270) {
-            this.setState({cards: 4});
+            this.setState({ cards: 4 });
             return;
         }
 
         if (window.innerWidth >= 1000) {
-            this.setState({cards: 3});
+            this.setState({ cards: 3 });
             return;
         }
 
-        this.setState({cards: 2});
+        this.setState({ cards: 2 });
     }
 
     restaurantCardTileOnClickHandler = (restaurantId) => {
@@ -117,7 +118,7 @@ class Home extends Component {
         let that = this;
         let dataRestaurants = null;
         let xhrRestaurants = new XMLHttpRequest();
-        xhrRestaurants.addEventListener('readystatechange', function() {
+        xhrRestaurants.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 if (!JSON.parse(this.responseText).restaurants) {
                     that.setState({
@@ -142,7 +143,9 @@ class Home extends Component {
         const { classes } = this.props;
         return (
             <div>
+                {/* header with search box */}
                 <Header
+                    showSearchBox={true}
                     searchHandler={this.searchHandler}
                 />
 
@@ -158,48 +161,50 @@ class Home extends Component {
                     >
                         {this.state.restaurants.map(restaurant => (
                             <GridListTile
-                            onClick={() => this.restaurantCardTileOnClickHandler(restaurant.id)}
+                                onClick={() => this.restaurantCardTileOnClickHandler(restaurant.id)}
                                 key={'restaurant' + restaurant.id}
-                                >
+                            >
 
-                                {/* <Link to={'/restaurant/' + restaurant.id}> */}
+                                {/* restaurant details card */}
                                 <Card className={classes.restaurantCard} style={{ textDecoration: 'none' }}>
                                     <CardMedia
                                         className={classes.restaurantCardMedia}
                                         image={restaurant.photo_URL}
                                         title={restaurant.restaurant_name}
-                                        />
+                                    />
                                     <CardContent>
+
+                                        {/* restaurant name */}
                                         <Typography className={classes.restaurantName} gutterBottom variant='h5' component='h2'>
                                             {restaurant.restaurant_name}
                                         </Typography>
 
+                                        {/* restaurant categories */}
                                         <Typography variant='subtitle1'>
                                             {restaurant.categories}
                                         </Typography>
 
                                         <div className={classes.ratingAvgRateDiv}>
+                                            {/* restaurant rating */}
                                             <div className={classes.restaurantRatingDiv}>
                                                 <Typography className={classes.restaurantRatingText} variant='body2'>
                                                     <i className="fa fa-star"></i> {restaurant.customer_rating} ({restaurant.number_customers_rated})
                                                 </Typography>
                                             </div>
 
+                                            {/* restaurant average price */}
                                             <Typography className={classes.restaurantAvgRateText} variant='body2'>
                                                 <i className="fa fa-inr"></i>{restaurant.average_price} for two
                                             </Typography>
                                         </div>
-
                                     </CardContent>
                                 </Card>
-
                             </GridListTile>
-                        ))
-                        }
+                        ))}
                     </GridList>
                 }
             </div>
-        )
+        );
     }
 }
 

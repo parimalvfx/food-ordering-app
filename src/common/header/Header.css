@@ -16,7 +16,7 @@
     width: 250px;
     margin: auto;
     top: 50%;
-    transform: translateY(40%);
+    transform: translateY(50%);
 }
 
 #search-box-icon {
@@ -29,11 +29,18 @@
     width: 250px;
 }
 
-.app-login {
+.app-login-1 {
     float: right;
     margin-right: 16px;
     top: 50%;
     transform: translateY(-50%);
+}
+
+.app-login-2 {
+    float: right;
+    margin-right: 16px;
+    top: 50%;
+    transform: translateY(35%);
 }
 
 #login-btn-icon {
@@ -86,7 +93,8 @@
         transform: none;
     }
 
-    .app-login {
+    .app-login-1,
+    .app-login-2 {
         float: none;
         margin: 16px 0 0 16px;
         transform: none;
