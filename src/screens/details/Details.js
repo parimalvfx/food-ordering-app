@@ -74,7 +74,7 @@ class Details extends Component {
                 <div className="flex-75">{item.item_name}</div>
                 <div className="flex-10"><i className='fa fa-inr'></i> {item.price}</div>
                 <div className="flex-10 plus-btn">
-                    <IconButton aria-label="Add" style={{ padding: '1px' }} onClick={this.addMenuClick(item)}>
+                    <IconButton aria-label="Add" style={{ padding: '1px' }} onClick={this.addMenuClick(item, 'ADD')}>
                         <AddIcon />
                     </IconButton>
                 </div>
@@ -92,7 +92,7 @@ class Details extends Component {
                         <div className="minus-icon"> - </div>
                     </IconButton>
                     {item.count}
-                    <IconButton aria-label="Add" className="btn-hover" style={{ padding: '1px' }} onClick={this.addMenuClick(item)}>
+                    <IconButton aria-label="Add" className="btn-hover" style={{ padding: '1px' }} onClick={this.addMenuClick(item, 'INCREMENT')}>
                         <AddIcon className="black-color" />
                     </IconButton>
                 </div>
@@ -136,7 +136,7 @@ class Details extends Component {
         }
     }
 
-    addMenuClick = item => event => {
+    addMenuClick = (item, method) => event => {
         let selectedItem, newAdded
         let duplicates = this.state.checkoutArr.filter(data => item.id === data.id && item.category_name === data.category_name)
         if (duplicates.length > 0) {
@@ -155,11 +155,10 @@ class Details extends Component {
             newAdded = [...this.state.checkoutArr, selectedItem]
         }
 
-
         console.log(newAdded)
         const itemLength = this.state.itemAdded + 1
         const totalPrice = this.state.totalPrice + item.price
-        this.setState({ checkoutArr: newAdded, open: true, btnClicked: 'ADD', itemAdded: itemLength, totalPrice: totalPrice });
+        this.setState({ checkoutArr: newAdded, open: true, btnClicked: method, itemAdded: itemLength, totalPrice: totalPrice });
     };
 
     handleClose = (event, reason) => {
@@ -171,22 +170,24 @@ class Details extends Component {
     }
 
     checkoutHandler = () => {
+        if (this.state.checkoutArr && this.state.checkoutArr.length === 0) {
+            this.setState({ open: true, btnClicked: 'CHECKOUT' });
+            return;
+        }
+
         if (sessionStorage.getItem('access-token') === null) {
             this.setState({ open: true, btnClicked: 'LOGIN' });
             return;
         }
-        if (this.state.checkoutArr && this.state.checkoutArr.length === 0) {
-            this.setState({ open: true, btnClicked: 'CHECKOUT' });
-        } else {
-            console.log(this.state)
-            let customerCart = {
-                restaurantDetails: this.state.restaurantDetails,
-                cartItems: this.state.checkoutArr,
-                totalPrice: this.state.totalPrice
-            };
-            sessionStorage.setItem('customer-cart', JSON.stringify(customerCart));
-            this.props.history.push('/checkout');
-        }
+
+        console.log(this.state)
+        let customerCart = {
+            restaurantDetails: this.state.restaurantDetails,
+            cartItems: this.state.checkoutArr,
+            totalPrice: this.state.totalPrice
+        };
+        sessionStorage.setItem('customer-cart', JSON.stringify(customerCart));
+        this.props.history.push('/checkout');
     }
 
     render() {
@@ -262,14 +263,16 @@ class Details extends Component {
                             'aria-describedby': 'message-id',
                         }}
                         message={<span id="message-id">{
+                            this.state.btnClicked === 'CHECKOUT' ?
+                            'Please add an item to your cart!' :
                             this.state.btnClicked === 'LOGIN' ?
                             'Please login first!' :
                             this.state.btnClicked === 'ADD' ?
                             'Item added to cart!' :
-                            this.state.btnClicked === 'CHECKOUT' ?
-                            'Please add an item to your cart!' :
+                            this.state.btnClicked === 'INCREMENT' ?
+                            'Item quantity increased by 1!' :
                             this.state.btnClicked === 'MINUS' ?
-                            'Item quantity decreased by 1!' : ''}</span>}
+                            'Item removed from cart!' : ''}</span>}
                         action={[
                             <IconButton
                                 key="close"
