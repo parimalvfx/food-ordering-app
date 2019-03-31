@@ -66,6 +66,9 @@ class Home extends Component {
     }
 
     componentWillMount() {
+        // clear existing cart
+        sessionStorage.removeItem('customer-cart');
+    
         // get restaurants from api
         let that = this;
         let dataRestaurants = null;

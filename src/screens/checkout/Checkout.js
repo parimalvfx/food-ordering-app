@@ -195,6 +195,10 @@ class Checkout extends Component {
         xhrPaymentModes.send(dataPaymentModes);
     };
 
+    componentWillUnmount() {
+        sessionStorage.removeItem('customer-cart');
+    }
+
     stepperNextHandler = () => {
         this.setState(preState => ({
             activeStep: preState.activeStep + 1,
