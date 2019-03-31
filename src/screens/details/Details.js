@@ -171,8 +171,12 @@ class Details extends Component {
     }
 
     checkoutHandler = () => {
+        if (sessionStorage.getItem('access-token') === null) {
+            this.setState({ open: true, btnClicked: 'LOGIN' });
+            return;
+        }
         if (this.state.checkoutArr && this.state.checkoutArr.length === 0) {
-            this.setState({ open: true, btnClicked: 'CHECKOUT' })
+            this.setState({ open: true, btnClicked: 'CHECKOUT' });
         } else {
             console.log(this.state)
             let customerCart = {
@@ -243,7 +247,6 @@ class Details extends Component {
                                         CHECKOUT
                                 </Button>
                                 </CardContent>
-
                             </Card>
                         </Grid>
                     </Grid>
@@ -259,12 +262,14 @@ class Details extends Component {
                             'aria-describedby': 'message-id',
                         }}
                         message={<span id="message-id">{
+                            this.state.btnClicked === 'LOGIN' ?
+                            'Please login first!' :
                             this.state.btnClicked === 'ADD' ?
-                                'Item added to cart!' :
-                                this.state.btnClicked === 'CHECKOUT' ?
-                                    'Please add an item to your cart!' :
-                                    this.state.btnClicked === 'MINUS' ?
-                                        'Item quantity decreased by 1!' : ''}</span>}
+                            'Item added to cart!' :
+                            this.state.btnClicked === 'CHECKOUT' ?
+                            'Please add an item to your cart!' :
+                            this.state.btnClicked === 'MINUS' ?
+                            'Item quantity decreased by 1!' : ''}</span>}
                         action={[
                             <IconButton
                                 key="close"
