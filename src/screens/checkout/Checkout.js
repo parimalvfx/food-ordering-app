@@ -31,6 +31,8 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = theme => ({
     stepperButton: {
@@ -127,7 +129,7 @@ class Checkout extends Component {
             customerCart: JSON.parse(sessionStorage.getItem('customer-cart')),
             activeStep: 0,
             tabValue: 0,
-            selectedExistingAddress: '',
+            selectedExistingAddress: null,
             flatBuildingNoRequired: 'display-none',
             flatBuildingNo: '',
             localityRequired: 'display-none',
@@ -143,7 +145,7 @@ class Checkout extends Component {
             states: [],
             paymentModes: [],
             radioValue: '',
-            selectedPaymentMode: '',
+            selectedPaymentMode: null,
             openPlaceOrderMsg: false,
             orderId: '',
             placeOrderMsg: '',
@@ -203,6 +205,16 @@ class Checkout extends Component {
     }
 
     stepperNextHandler = () => {
+        // do not increment step if address is not selected
+        if (this.state.activeStep === 0 && this.state.selectedExistingAddress === null) {
+            return;
+        }
+
+        // do not increment step if payment mode is not selected
+        if (this.state.activeStep === 1 && this.state.selectedPaymentMode === null) {
+            return;
+        }
+
         this.setState(preState => ({
             activeStep: preState.activeStep + 1,
         }));
@@ -682,12 +694,12 @@ class Checkout extends Component {
                                 </Typography>
 
                                 {this.state.customerCart.cartItems.map(item => (
-                                    <div key={'item' + item.id} className='flex width-100 pd-1-per'>
+                                    <div key={'item' + item.id + item.category_name} className='flex width-100 pd-1-per'>
                                         <div className='width-10'><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
                                         <div className='width-50 capital checkout-grey-color'>{item.item_name}</div>
                                         <div className='width-25 checkout-grey-color'>{item.count}</div>
                                         <div className='width-4 checkout-grey-color'><i className='fa fa-inr'></i></div>
-                                        <div className='checkout-grey-color'>{item.totalItemPrice}</div>
+                                        <div className='checkout-grey-color'>{item.totalItemPrice}.00</div>
                                     </div>
                                 ))}
 
@@ -696,11 +708,10 @@ class Checkout extends Component {
                                 {/* summary - net amount */}
                                 <div className={classes.netAmount}>
                                     Net Amount
-                                    <span className='right mr-8p'>
+                                    <span className='right'>
                                         <span className='width-5 checkout-grey-color'>
                                             <i className='fa fa-inr'></i>
-                                        </span>
-                                        {this.state.customerCart.totalPrice}
+                                        </span> {this.state.customerCart.totalPrice}.00
                                     </span>
                                 </div>
 
@@ -732,6 +743,16 @@ class Checkout extends Component {
                         'aria-describedby': 'message-id',
                     }}
                     message={<span id='message-id'>{this.state.placeOrderMsg}</span>}
+                    action={[
+                        <IconButton
+                            key='close'
+                            aria-label='Close'
+                            color='inherit'
+                            onClick={this.placeOrderMsgOnCloseHandler}
+                        >
+                            <CloseIcon />
+                        </IconButton>,
+                    ]}
                 />
             </div>
         );

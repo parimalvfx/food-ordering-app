@@ -45,10 +45,10 @@ class Details extends Component {
         let that = this;
         let dataRestaurant = null;
         let xhrRestaurant = new XMLHttpRequest();
-        xhrRestaurant.addEventListener('readystatechange', function() {
+        xhrRestaurant.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 that.setState({
-                    restaurantDetails: JSON.parse(this.responseText)
+                    restaurantDetails: JSON.parse(this.responseText),
                 });
             }
         });
@@ -59,7 +59,7 @@ class Details extends Component {
 
     getCategory = () => {
         let data = this.state.restaurantDetails;
-        let dataLength = data.categories && data.categories.length
+        let dataLength = data.categories && data.categories.length;
         return dataLength > 0 ?
             data.categories.map((item, index) => {
                 return <span key={index}>{item.category_name}{dataLength === index + 1 ? '' : ', '} </span>
@@ -72,9 +72,9 @@ class Details extends Component {
             return <div className="flex pd-1-per" key={index}>
                 <div className="flex-5"><i className={item.item_type === 'NON_VEG' ? 'fa fa-circle non-veg' : 'fa fa-circle veg'}></i></div>
                 <div className="flex-75">{item.item_name}</div>
-                <div className="flex-10"><i className='fa fa-inr'></i> {item.price}</div>
+                <div className="flex-10"><i className='fa fa-inr'></i> {item.price}.00</div>
                 <div className="flex-10 plus-btn">
-                    <IconButton aria-label="Add" style={{ padding: '1px' }} onClick={this.addMenuClick(item)}>
+                    <IconButton aria-label="Add" style={{ padding: '1px' }} onClick={this.addMenuClick(item, 'ADD')}>
                         <AddIcon />
                     </IconButton>
                 </div>
@@ -87,24 +87,24 @@ class Details extends Component {
             return <div className="flex width-100 pd-1-per" key={index}>
                 <div className="width-5"><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
                 <div className="width-40 capital checkout-grey-color">{item.item_name}</div>
-                <div className="width-45">
+                <div className="width-40">
                     <IconButton aria-label="AddIcon" className="btn-hover" style={{ padding: '1px' }} onClick={this.removeMenuClick(item)}>
                         <div className="minus-icon"> - </div>
                     </IconButton>
                     {item.count}
-                    <IconButton aria-label="Add" className="btn-hover" style={{ padding: '1px' }} onClick={this.addMenuClick(item)}>
+                    <IconButton aria-label="Add" className="btn-hover" style={{ padding: '1px' }} onClick={this.addMenuClick(item, 'INCREMENT')}>
                         <AddIcon className="black-color" />
                     </IconButton>
                 </div>
-                <div className="width-10 checkout-grey-color"><i className='fa fa-inr'></i> {item.totalItemPrice}</div>
-
+                <div className="width-2-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
+                <div className='checkout-grey-color'> {item.totalItemPrice}.00</div>
             </div>
         })
     }
 
     getCategoryList = () => {
         let data = this.state.restaurantDetails;
-        let dataLength = data.categories && data.categories.length
+        let dataLength = data.categories && data.categories.length;
         return dataLength > 0 ?
             data.categories.map((item, index) => {
                 return <div className="mt-15" key={'item' + item.id}>
@@ -116,50 +116,51 @@ class Details extends Component {
     }
 
     removeMenuClick = item => event => {
-        console.log(this.state.itemAdded)
-        const itemLength = this.state.itemAdded - 1
-        console.log(this.state.checkoutArr)
+        const itemLength = this.state.itemAdded - 1;
         if (item.count === 1) {
-            let newArr = this.state.checkoutArr.filter(data => item.id !== data.id && item.category_name !== data.category_name)
-            const totalPrice = this.state.totalPrice - item.price
-            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'MINUS', itemAdded: itemLength })
-        } else {
-            let newArr = [...this.state.checkoutArr]
+            let newArr = [...this.state.checkoutArr];
             newArr.forEach((data, index) => {
                 if (item.id === data.id && item.category_name === data.category_name) {
-                    newArr[index].count = data.count - 1
-                    newArr[index].totalItemPrice = data.totalItemPrice - data.price
+                    newArr.splice(index, 1);
+                }
+            });
+            const totalPrice = this.state.totalPrice - item.price;
+            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'REMOVE', itemAdded: itemLength });
+        } else {
+            let newArr = [...this.state.checkoutArr];
+            newArr.forEach((data, index) => {
+                if (item.id === data.id && item.category_name === data.category_name) {
+                    newArr[index].count = data.count - 1;
+                    newArr[index].totalItemPrice = data.totalItemPrice - data.price;
                 }
             })
-            const totalPrice = this.state.totalPrice - item.price
-            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'MINUS', itemAdded: itemLength })
+            const totalPrice = this.state.totalPrice - item.price;
+            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'DECREMENT', itemAdded: itemLength });
         }
     }
 
-    addMenuClick = item => event => {
-        let selectedItem, newAdded
-        let duplicates = this.state.checkoutArr.filter(data => item.id === data.id && item.category_name === data.category_name)
+    addMenuClick = (item, method) => event => {
+        let selectedItem, newAdded;
+        let duplicates = this.state.checkoutArr.filter(data => item.id === data.id && item.category_name === data.category_name);
         if (duplicates.length > 0) {
             selectedItem = this.state.checkoutArr.map(eachItem => {
                 if (eachItem.id === duplicates[0].id && eachItem.category_name === duplicates[0].category_name) {
-                    let count = eachItem.count + 1
-                    eachItem.count = count
-                    eachItem.totalItemPrice = eachItem.price * count
+                    let count = eachItem.count + 1;
+                    eachItem.count = count;
+                    eachItem.totalItemPrice = eachItem.price * count;
                 }
-                return eachItem
+                return eachItem;
             })
-            newAdded = [...selectedItem]
+            newAdded = [...selectedItem];
         } else {
-            let count = duplicates.length + 1
-            selectedItem = { ...item, count: count, totalItemPrice: item.price * count }
-            newAdded = [...this.state.checkoutArr, selectedItem]
+            let count = duplicates.length + 1;
+            selectedItem = { ...item, count: count, totalItemPrice: item.price * count };
+            newAdded = [...this.state.checkoutArr, selectedItem];
         }
 
-
-        console.log(newAdded)
-        const itemLength = this.state.itemAdded + 1
-        const totalPrice = this.state.totalPrice + item.price
-        this.setState({ checkoutArr: newAdded, open: true, btnClicked: 'ADD', itemAdded: itemLength, totalPrice: totalPrice });
+        const itemLength = this.state.itemAdded + 1;
+        const totalPrice = this.state.totalPrice + item.price;
+        this.setState({ checkoutArr: newAdded, open: true, btnClicked: method, itemAdded: itemLength, totalPrice: totalPrice });
     };
 
     handleClose = (event, reason) => {
@@ -172,30 +173,33 @@ class Details extends Component {
 
     checkoutHandler = () => {
         if (this.state.checkoutArr && this.state.checkoutArr.length === 0) {
-            this.setState({ open: true, btnClicked: 'CHECKOUT' })
-        } else {
-            console.log(this.state)
-            let customerCart = {
-                restaurantDetails: this.state.restaurantDetails,
-                cartItems: this.state.checkoutArr,
-                totalPrice: this.state.totalPrice
-            };
-            sessionStorage.setItem('customer-cart', JSON.stringify(customerCart));
-            this.props.history.push('/checkout');
+            this.setState({ open: true, btnClicked: 'CHECKOUT' });
+            return;
         }
+
+        if (sessionStorage.getItem('access-token') === null) {
+            this.setState({ open: true, btnClicked: 'LOGIN' });
+            return;
+        }
+
+        let customerCart = {
+            restaurantDetails: this.state.restaurantDetails,
+            cartItems: this.state.checkoutArr,
+            totalPrice: this.state.totalPrice
+        };
+        sessionStorage.setItem('customer-cart', JSON.stringify(customerCart));
+        this.props.history.push('/checkout');
     }
 
     render() {
-        // const restroData = this.state.restaurantDetails;
         const { photo_URL, restaurant_name, address, customer_rating, average_price, number_customers_rated } = this.state.restaurantDetails;
-        // console.log(this.state.restaurantDetails);
         return (
             <div>
                 <Header />
                 <div>
                     <Grid container spacing={24} className="bggrey mobile-text-center" >
                         <Grid item xs={12} sm={3} className="text-center">
-                            <img src={photo_URL} width="300" alt={photo_URL} height="250" className="mobile-margin-top-20" />
+                            <img src={photo_URL} width="300" alt={photo_URL} height="250" className="margin-top-20" />
                         </Grid>
                         <Grid item xs={12} sm={9}>
                             <Grid container spacing={24}>
@@ -206,15 +210,13 @@ class Details extends Component {
                                     <Grid container spacing={24}>
                                         <Grid item xs={6} sm={6}>
                                             <div className="container_item3">
-                                                <i className='fa fa-star'></i>
-                                                {customer_rating}
+                                                <i className='fa fa-star'></i> {customer_rating}
                                                 <p className="text_format">AVERAGE RATING BY<br /><span className="bold">{number_customers_rated}</span> CUSTOMERS</p>
                                             </div>
                                         </Grid>
                                         <Grid item xs={6} sm={6}>
                                             <div className="container_item3">
-                                                <i className='fa fa-inr'></i>
-                                                {average_price}
+                                                <i className='fa fa-inr'></i> {average_price}
                                                 <p className="text_format">AVERAGE COST FOR<br />TWO PEOPLE</p>
                                             </div>
                                         </Grid>
@@ -238,12 +240,11 @@ class Details extends Component {
                                     </Typography>
 
                                     {this.getCheckoutDishList(this.state.checkoutArr)}
-                                    <div className="bold pd-1-per">Total Amount <span className="right mr-8"><i className='fa fa-inr'></i> {this.state.totalPrice}</span></div>
+                                    <div className="bold pd-1-per">TOTAL AMOUNT <span className="right mr-8"><i className='fa fa-inr'></i> {this.state.totalPrice}.00</span></div>
                                     <Button className="mt-24-px" variant="contained" fullWidth size="medium" color="primary" onClick={this.checkoutHandler}>
                                         CHECKOUT
                                 </Button>
                                 </CardContent>
-
                             </Card>
                         </Grid>
                     </Grid>
@@ -259,12 +260,18 @@ class Details extends Component {
                             'aria-describedby': 'message-id',
                         }}
                         message={<span id="message-id">{
-                            this.state.btnClicked === 'ADD' ?
-                                'Item added to cart!' :
-                                this.state.btnClicked === 'CHECKOUT' ?
-                                    'Please add an item to your cart!' :
-                                    this.state.btnClicked === 'MINUS' ?
-                                        'Item quantity decreased by 1!' : ''}</span>}
+                            this.state.btnClicked === 'CHECKOUT' ?
+                                'Please add an item to your cart!' :
+                                this.state.btnClicked === 'LOGIN' ?
+                                    'Please login first!' :
+                                    this.state.btnClicked === 'ADD' ?
+                                        'Item added to cart!' :
+                                        this.state.btnClicked === 'INCREMENT' ?
+                                            'Item quantity increased by 1!' :
+                                            this.state.btnClicked === 'REMOVE' ?
+                                                'Item removed from cart!' :
+                                                this.state.btnClicked === 'DECREMENT' ?
+                                                    'Item quantity decreased by 1!' : ''}</span>}
                         action={[
                             <IconButton
                                 key="close"
