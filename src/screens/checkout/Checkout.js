@@ -127,7 +127,7 @@ class Checkout extends Component {
             customerCart: JSON.parse(sessionStorage.getItem('customer-cart')),
             activeStep: 0,
             tabValue: 0,
-            selectedExistingAddress: '',
+            selectedExistingAddress: null,
             flatBuildingNoRequired: 'display-none',
             flatBuildingNo: '',
             localityRequired: 'display-none',
@@ -143,7 +143,7 @@ class Checkout extends Component {
             states: [],
             paymentModes: [],
             radioValue: '',
-            selectedPaymentMode: '',
+            selectedPaymentMode: null,
             openPlaceOrderMsg: false,
             orderId: '',
             placeOrderMsg: '',
@@ -203,6 +203,16 @@ class Checkout extends Component {
     }
 
     stepperNextHandler = () => {
+        // do not increment step if address is not selected
+        if (this.state.activeStep === 0 && this.state.selectedExistingAddress === null) {
+            return;
+        }
+
+        // do not increment step if payment mode is not selected
+        if (this.state.activeStep === 1 && this.state.selectedPaymentMode === null) {
+            return;
+        }
+
         this.setState(preState => ({
             activeStep: preState.activeStep + 1,
         }));

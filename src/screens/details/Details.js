@@ -199,7 +199,7 @@ class Details extends Component {
                 <div>
                     <Grid container spacing={24} className="bggrey mobile-text-center" >
                         <Grid item xs={12} sm={3} className="text-center">
-                            <img src={photo_URL} width="300" alt={photo_URL} height="250" className="mobile-margin-top-20" />
+                            <img src={photo_URL} width="300" alt={photo_URL} height="250" className="margin-top-20" />
                         </Grid>
                         <Grid item xs={12} sm={9}>
                             <Grid container spacing={24}>
@@ -210,15 +210,13 @@ class Details extends Component {
                                     <Grid container spacing={24}>
                                         <Grid item xs={6} sm={6}>
                                             <div className="container_item3">
-                                                <i className='fa fa-star'></i>
-                                                {customer_rating}
+                                                <i className='fa fa-star'></i> {customer_rating}
                                                 <p className="text_format">AVERAGE RATING BY<br /><span className="bold">{number_customers_rated}</span> CUSTOMERS</p>
                                             </div>
                                         </Grid>
                                         <Grid item xs={6} sm={6}>
                                             <div className="container_item3">
-                                                <i className='fa fa-inr'></i>
-                                                {average_price}
+                                                <i className='fa fa-inr'></i> {average_price}
                                                 <p className="text_format">AVERAGE COST FOR<br />TWO PEOPLE</p>
                                             </div>
                                         </Grid>
