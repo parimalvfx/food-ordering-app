@@ -93,8 +93,14 @@ const styles = theme => ({
         marginTop: '25px',
         // width: '360px',
     },
+    summaryCardDivider: {
+        marginTop: '5px',
+    },
+    netAmount: {
+        marginTop: '15px',
+    },
     placeOrderButton: {
-        // width: '100%'
+        marginTop: '20px',
     },
     stepperGridItem: {
         // width: '70%',
@@ -677,7 +683,7 @@ class Checkout extends Component {
 
                     {/* cart summary */}
                     <Grid item={true} xs>
-                        <Card className={classes.summaryCard}>
+                        <Card id='summary-card'>
                             <CardContent>
                                 <Typography variant='h5'>
                                     Summary
@@ -690,31 +696,27 @@ class Checkout extends Component {
                                 </Typography>
 
                                 {this.state.customerCart.cartItems.map(item => (
-                                    <div key={'item' + item.id} className="flex width-100 pd-1-per">
-                                        <div className="width-10"><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
-                                        <div className="width-40 capital checkout-grey-color">{item.item_name}</div>
-                                        <div className="width-10 checkout-grey-color">{item.count}</div>
-                                        <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
-                                        <div className="width-10 checkout-grey-color">{item.totalItemPrice}</div>
+                                    <div key={'item' + item.id} className='flex width-100 pd-1-per'>
+                                        <div className='width-10'><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
+                                        <div className='width-50 capital checkout-grey-color'>{item.item_name}</div>
+                                        <div className='width-25 checkout-grey-color'>{item.count}</div>
+                                        <div className='width-4 checkout-grey-color'><i className='fa fa-inr'></i></div>
+                                        <div className='checkout-grey-color'>{item.totalItemPrice}</div>
                                     </div>
                                 ))}
 
-                                <Divider />
+                                <Divider className={classes.summaryCardDivider} />
 
                                 {/* summary - net amount */}
-                                {/* <Typography variant='subtitle2' gutterBottom>
-                                    Net Amount
-                                </Typography>
-                                <div  className="width-10 checkout-grey-color"><i className='fa fa-inr'></i> 653.00</div> */}
-                                <div className="pd-1-per">Net Amount 
-                                    <span className="right mr-8">
-                                        <span className="width-5 checkout-grey-color">
+                                <div className={classes.netAmount}>
+                                    Net Amount 
+                                    <span className='right mr-8p'>
+                                        <span className='width-5 checkout-grey-color'>
                                             <i className='fa fa-inr'></i>
                                         </span>
                                         {this.state.customerCart.totalPrice}
                                     </span>
                                 </div>
-
 
                                 {/* summary - place order */}
                                 <Button
@@ -745,7 +747,6 @@ class Checkout extends Component {
                     }}
                     message={<span id='message-id'>{this.state.placeOrderMsg}</span>}
                 />
-
             </div>
         );
     }
