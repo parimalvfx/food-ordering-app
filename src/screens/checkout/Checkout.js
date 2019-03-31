@@ -33,10 +33,7 @@ import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
 
 const styles = theme => ({
-    stepperRoot: {
-        // width: '90%',
-    },
-    button: {
+    stepperButton: {
         marginTop: theme.spacing.unit,
         marginRight: theme.spacing.unit,
     },
@@ -74,6 +71,9 @@ const styles = theme => ({
         float: 'right',
         marginRight: '10px',
     },
+    newAddressStateSelect: {
+        width: '194px',
+    },
     radioRoot: {
         display: 'flex',
     },
@@ -83,32 +83,37 @@ const styles = theme => ({
     radioGroup: {
         margin: `${theme.spacing.unit}px 0`,
     },
-    summaryCard: {
-        // float: 'right',
-        // marginLeft: '10px',
-        marginRight: '15px',
-        marginTop: '25px',
-        // width: '360px',
+    summaryCardDivider: {
+        marginTop: '5px',
+    },
+    netAmount: {
+        marginTop: '15px',
     },
     placeOrderButton: {
-        // width: '100%'
-    },
-    stepperGridItem: {
-        // width: '70%',
+        marginTop: '20px',
     },
 });
 
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: 48 * 4 + 8,
+            width: 250,
+        },
+    },
+};
+
 function getSteps() {
     return ['Delivery', 'Payment'];
-}
+};
 
 function TabContainer(props) {
     return (
-        <Typography component='div' style={{padding: 8*3}}>
+        <Typography component='div' style={{ padding: 8 * 3 }}>
             {props.children}
         </Typography>
     )
-}
+};
 
 TabContainer.propTypes = {
     children: PropTypes.node.isRequired,
@@ -135,7 +140,6 @@ class Checkout extends Component {
             pincodeRequiredMsg: 'required',
             pincode: '',
             customerExistingAddresses: [],
-            customerExistingAddressesSelection: [],
             states: [],
             paymentModes: [],
             radioValue: '',
@@ -144,7 +148,6 @@ class Checkout extends Component {
             orderId: '',
             placeOrderMsg: '',
         }
-        console.log(JSON.parse(sessionStorage.getItem('customer-cart')));
     };
 
     preState = {
@@ -157,7 +160,7 @@ class Checkout extends Component {
         // customer existing address
         let dataCustomerAddress = null;
         let xhrCustomerAddress = new XMLHttpRequest();
-        xhrCustomerAddress.addEventListener('readystatechange', function() {
+        xhrCustomerAddress.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 that.setState({
                     customerExistingAddresses: JSON.parse(this.responseText).addresses,
@@ -171,7 +174,7 @@ class Checkout extends Component {
         // states request
         let dataStates = null;
         let xhrStates = new XMLHttpRequest();
-        xhrStates.addEventListener('readystatechange', function() {
+        xhrStates.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 that.setState({
                     states: JSON.parse(this.responseText).states,
@@ -184,7 +187,7 @@ class Checkout extends Component {
         // payment modes request
         let dataPaymentModes = null;
         let xhrPaymentModes = new XMLHttpRequest();
-        xhrPaymentModes.addEventListener('readystatechange', function() {
+        xhrPaymentModes.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 that.setState({
                     paymentModes: JSON.parse(this.responseText).paymentMethods,
@@ -194,6 +197,10 @@ class Checkout extends Component {
         xhrPaymentModes.open('GET', 'http://localhost:8080/api/payment');
         xhrPaymentModes.send(dataPaymentModes);
     };
+
+    componentWillUnmount() {
+        sessionStorage.removeItem('customer-cart');
+    }
 
     stepperNextHandler = () => {
         this.setState(preState => ({
@@ -214,7 +221,7 @@ class Checkout extends Component {
     };
 
     tabChangeHandler = (event, value) => {
-        this.setState({tabValue: value});
+        this.setState({ tabValue: value });
     };
 
     existingAddressOnClickHandler = (addressId) => {
@@ -226,56 +233,56 @@ class Checkout extends Component {
     };
 
     flatBuildingNoChangeHandler = event => {
-        this.setState({flatBuildingNo: event.target.value});
+        this.setState({ flatBuildingNo: event.target.value });
     };
 
     localityChangeHandler = event => {
-        this.setState({locality: event.target.value});
+        this.setState({ locality: event.target.value });
     };
 
     cityChangeHandler = event => {
-        this.setState({city: event.target.value});
+        this.setState({ city: event.target.value });
     };
 
     stateChangeHandler = event => {
-        this.setState({newAddressState: event.target.value});
+        this.setState({ newAddressState: event.target.value });
     };
 
     pincodeChangeHandler = event => {
-        this.setState({pincode: event.target.value});
+        this.setState({ pincode: event.target.value });
     };
 
     saveAddressOnClickHandler = () => {
         let flatBuildingNoReq = false;
         if (this.state.flatBuildingNo === '') {
-            this.setState({flatBuildingNoRequired: 'display-block'});
+            this.setState({ flatBuildingNoRequired: 'display-block' });
             flatBuildingNoReq = true;
         } else {
-            this.setState({flatBuildingNoRequired: 'display-none'});
+            this.setState({ flatBuildingNoRequired: 'display-none' });
         }
 
         let localityReq = false;
         if (this.state.locality === '') {
-            this.setState({localityRequired: 'display-block'});
+            this.setState({ localityRequired: 'display-block' });
             localityReq = true;
-        }   else {
-            this.setState({localityRequired: 'display-none'});
+        } else {
+            this.setState({ localityRequired: 'display-none' });
         }
 
         let cityReq = false;
         if (this.state.city === '') {
-            this.setState({cityRequired: 'display-block'});
+            this.setState({ cityRequired: 'display-block' });
             cityReq = true;
         } else {
-            this.setState({cityRequired: 'display-none'});
+            this.setState({ cityRequired: 'display-none' });
         }
 
         let stateReq = false;
         if (this.state.newAddressState === '') {
-            this.setState({stateRequired: 'display-block'});
+            this.setState({ stateRequired: 'display-block' });
             stateReq = true;
         } else {
-            this.setState({stateRequired: 'display-none'});
+            this.setState({ stateRequired: 'display-none' });
         }
 
         let pincodeReq = false;
@@ -286,7 +293,7 @@ class Checkout extends Component {
             });
             pincodeReq = true;
         } else {
-            this.setState({pincodeRequired: 'display-none'});
+            this.setState({ pincodeRequired: 'display-none' });
         }
 
         let validatePincode = new RegExp('^[1-9][0-9]{5}$');
@@ -294,7 +301,8 @@ class Checkout extends Component {
             this.setState({
                 pincodeRequired: 'display-block',
                 pincodeRequiredMsg: 'Pincode must contain only numbers and must be 6 digits long'
-            })
+            });
+            return;
         }
 
         if (flatBuildingNoReq || localityReq || cityReq || stateReq || pincodeReq) {
@@ -318,11 +326,11 @@ class Checkout extends Component {
             'state_uuid': stateUUID
         }
         let xhrNewAddress = new XMLHttpRequest();
-        xhrNewAddress.addEventListener('readystatechange', function() {
+        xhrNewAddress.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 let dataCustomerAddress = null;
                 let xhrCustomerAddress = new XMLHttpRequest();
-                xhrCustomerAddress.addEventListener('readystatechange', function() {
+                xhrCustomerAddress.addEventListener('readystatechange', function () {
                     if (this.readyState === 4) {
                         that.setState({
                             customerExistingAddresses: JSON.parse(this.responseText).addresses,
@@ -342,17 +350,17 @@ class Checkout extends Component {
     };
 
     radioChangeHandler = event => {
-        this.setState({radioValue: event.target.value});
+        this.setState({ radioValue: event.target.value });
     };
 
     radioClickHandler = (paymentId) => {
-        this.setState({selectedPaymentMode: paymentId});
+        this.setState({ selectedPaymentMode: paymentId });
     };
 
     placeOrderOnClickHandler = () => {
         let that = this;
         let itemQuantities = this.state.customerCart.cartItems.map(
-            function(i) {
+            function (i) {
                 return {
                     'item_id': i.id,
                     'price': i.totalItemPrice,
@@ -370,10 +378,9 @@ class Checkout extends Component {
             'restaurant_id': this.state.customerCart.restaurantDetails.id
         }
         let xhrPlaceOrder = new XMLHttpRequest();
-        xhrPlaceOrder.addEventListener('readystatechange', function() {
+        xhrPlaceOrder.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 let responseText = JSON.parse(this.responseText);
-                console.log(responseText);
                 if (responseText.status === 'ORDER SUCCESSFULLY PLACED') {
                     that.setState({
                         openPlaceOrderMsg: true,
@@ -400,90 +407,95 @@ class Checkout extends Component {
             return;
         }
 
-        this.setState({openPlaceOrderMsg: false});
+        this.setState({ openPlaceOrderMsg: false });
     };
 
     render() {
-        const {classes} = this.props;
+        const { classes } = this.props;
         const steps = getSteps();
-        const {activeStep} = this.state;
-        const {tabValue} = this.state;
-
-        console.log(this.state);
+        const { activeStep } = this.state;
+        const { tabValue } = this.state;
 
         return (
             <div>
                 <Header />
 
                 <Grid container={true} >
-                    <Grid item={true} xs={9} className={classes.stepperGridItem}>
-                        <div className={classes.stepperRoot}>
+                    <Grid item={true} xs={9}>
+                        <div>
                             <Stepper activeStep={activeStep} orientation='vertical'>
                                 {steps.map((label, index) => (
                                     <Step key={label}>
                                         <StepLabel>{label}</StepLabel>
                                         <StepContent>
                                             {index === 0 ?
+
+                                                // existing and new address tabs
                                                 <div className={classes.tabRoot}>
                                                     <AppBar position='static'>
                                                         <Tabs value={tabValue} onChange={this.tabChangeHandler}>
-                                                            <Tab label='EXISTING ADDRESS'/>
-                                                            <Tab label='NEW ADDRESS'/>
+                                                            <Tab label='EXISTING ADDRESS' />
+                                                            <Tab label='NEW ADDRESS' />
                                                         </Tabs>
                                                     </AppBar>
 
                                                     {/* existing address */}
                                                     {tabValue === 0 &&
                                                         <TabContainer className={classes.existingAddressTabContainer}>
+                                                            {this.state.customerExistingAddresses === null ?
+                                                                <Typography variant='h6' color='textSecondary'>
+                                                                    There are no saved addresses! You can save an address using the 'New Address' tab or using your 'Profile' menu option.
+                                                                </Typography>
+                                                                :
+                                                                <GridList
+                                                                    className={classes.gridList}
+                                                                    cols={3}
+                                                                    cellHeight='auto'
+                                                                >
+                                                                    {this.state.customerExistingAddresses.map(address => (
+                                                                        <GridListTile
+                                                                            key={'address' + address.id}
+                                                                            id={this.state[address.id] || 'unselect-address'}
+                                                                            onClick={() => this.existingAddressOnClickHandler(address.id)}
+                                                                            className={classes.existingAddressGridListTile}
+                                                                            classes={{ tile: classes.existingAddressGridListTileTile }}
+                                                                        >
 
-                                                            <GridList className={classes.gridList} cols={3} cellHeight='auto'>
+                                                                            {/* existing address - flat/building no */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.flat_building_name}
+                                                                            </Typography>
 
-                                                                {this.state.customerExistingAddresses.map(address => (
+                                                                            {/* existing address - locality */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.locality}
+                                                                            </Typography>
 
-                                                                    <GridListTile
-                                                                        key={'address' + address.id}
-                                                                        id={this.state[address.id] || 'unselect-address'}
-                                                                        onClick={() => this.existingAddressOnClickHandler(address.id)}
-                                                                        className={classes.existingAddressGridListTile}
-                                                                        classes={{tile: classes.existingAddressGridListTileTile}}
-                                                                    >
+                                                                            {/* existing address - city */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.city}
+                                                                            </Typography>
 
-                                                                        {/* existing address - flat/building no */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.flat_building_name}
-                                                                        </Typography>
+                                                                            {/* existing address - state */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.state.state_name}
+                                                                            </Typography>
 
-                                                                        {/* existing address - locality */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.locality}
-                                                                        </Typography>
+                                                                            {/* existing address - pincode */}
+                                                                            <Typography variant='subtitle1'>
+                                                                                {address.pincode}
+                                                                            </Typography>
 
-                                                                        {/* existing address - city */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.city}
-                                                                        </Typography>
+                                                                            {/* existing address - check */}
+                                                                            <CheckCircleIcon
+                                                                                className={classes.existingAddressCheckCircle}
+                                                                                nativeColor={this.state[address.id] === 'select-address' ? 'green' : 'grey'}
+                                                                            />
 
-                                                                        {/* existing address - state */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.state.state_name}
-                                                                        </Typography>
-
-                                                                        {/* existing address - pincode */}
-                                                                        <Typography variant='subtitle1'>
-                                                                            {address.pincode}
-                                                                        </Typography>
-
-                                                                        {/* existing address - check */}
-                                                                        <CheckCircleIcon
-                                                                            className={classes.existingAddressCheckCircle}
-                                                                            nativeColor={this.state[address.id] === 'select-address' ? 'green' : 'grey'}
-                                                                        />
-
-                                                                    </GridListTile>
-                                                                ))}
-
-                                                            </GridList>
-
+                                                                        </GridListTile>
+                                                                    ))}
+                                                                </GridList>
+                                                            }
                                                         </TabContainer>
                                                     }
 
@@ -547,6 +559,8 @@ class Checkout extends Component {
                                                                     newaddressstate={this.state.newAddressState}
                                                                     value={this.state.newAddressState}
                                                                     onChange={this.stateChangeHandler}
+                                                                    className={classes.newAddressStateSelect}
+                                                                    MenuProps={MenuProps}
                                                                 >
                                                                     {this.state.states.map(state => (
                                                                         <MenuItem key={'state' + state.id} value={state.state_name}>
@@ -589,6 +603,7 @@ class Checkout extends Component {
                                                 : ''
                                             }
 
+                                            {/* payment methods - radio group*/}
                                             {index === 1 ?
                                                 <div className={classes.radioRoot}>
                                                     <FormControl component='fieldset' className={classes.radioFormControl}>
@@ -612,16 +627,16 @@ class Checkout extends Component {
                                                         </RadioGroup>
                                                     </FormControl>
                                                 </div>
-
                                                 : ''
                                             }
 
+                                            {/* stepper buttons */}
                                             <div className={classes.actionsContainer}>
                                                 <div>
                                                     <Button
                                                         disabled={activeStep === 0}
                                                         onClick={this.stepperBackHandler}
-                                                        className={classes.button}
+                                                        className={classes.stepperButton}
                                                     >
                                                         Back
                                                     </Button>
@@ -629,7 +644,7 @@ class Checkout extends Component {
                                                         variant='contained'
                                                         color='primary'
                                                         onClick={this.stepperNextHandler}
-                                                        className={classes.button}
+                                                        className={classes.stepperButton}
                                                     >
                                                         {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                                                     </Button>
@@ -644,7 +659,7 @@ class Checkout extends Component {
                                     <Typography variant='h6'>
                                         View the summary &#38; place your order now!
                                     </Typography>
-                                    <Button onClick={this.stepperResetHandler} className={classes.button}>
+                                    <Button onClick={this.stepperResetHandler} className={classes.stepperButton}>
                                         CHANGE
                                     </Button>
                                 </Paper>
@@ -652,9 +667,9 @@ class Checkout extends Component {
                         </div>
                     </Grid>
 
-                    {/* cart summary */}
+                    {/* cart summary card */}
                     <Grid item={true} xs>
-                        <Card className={classes.summaryCard}>
+                        <Card id='summary-card'>
                             <CardContent>
                                 <Typography variant='h5'>
                                     Summary
@@ -667,31 +682,27 @@ class Checkout extends Component {
                                 </Typography>
 
                                 {this.state.customerCart.cartItems.map(item => (
-                                    <div key={'item' + item.id} className="flex width-100 pd-1-per">
-                                        <div className="width-10"><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
-                                        <div className="width-40 capital checkout-grey-color">{item.item_name}</div>
-                                        <div className="width-10 checkout-grey-color">{item.count}</div>
-                                        <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
-                                        <div className="width-10 checkout-grey-color">{item.totalItemPrice}</div>
+                                    <div key={'item' + item.id} className='flex width-100 pd-1-per'>
+                                        <div className='width-10'><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
+                                        <div className='width-50 capital checkout-grey-color'>{item.item_name}</div>
+                                        <div className='width-25 checkout-grey-color'>{item.count}</div>
+                                        <div className='width-4 checkout-grey-color'><i className='fa fa-inr'></i></div>
+                                        <div className='checkout-grey-color'>{item.totalItemPrice}</div>
                                     </div>
                                 ))}
 
-                                <Divider />
+                                <Divider className={classes.summaryCardDivider} />
 
                                 {/* summary - net amount */}
-                                {/* <Typography variant='subtitle2' gutterBottom>
+                                <div className={classes.netAmount}>
                                     Net Amount
-                                </Typography>
-                                <div  className="width-10 checkout-grey-color"><i className='fa fa-inr'></i> 653.00</div> */}
-                                <div className="pd-1-per">Net Amount 
-                                    <span className="right mr-8">
-                                        <span className="width-5 checkout-grey-color">
+                                    <span className='right mr-8p'>
+                                        <span className='width-5 checkout-grey-color'>
                                             <i className='fa fa-inr'></i>
                                         </span>
                                         {this.state.customerCart.totalPrice}
                                     </span>
                                 </div>
-
 
                                 {/* summary - place order */}
                                 <Button
@@ -722,7 +733,6 @@ class Checkout extends Component {
                     }}
                     message={<span id='message-id'>{this.state.placeOrderMsg}</span>}
                 />
-
             </div>
         );
     }

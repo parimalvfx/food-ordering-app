@@ -355,6 +355,7 @@ class Header extends Component {
         sessionStorage.removeItem('access-token');
         sessionStorage.removeItem('user-uuid');
         sessionStorage.removeItem('user-first-name');
+        sessionStorage.removeItem('customer-cart');
         this.setState({
             anchorEl: null,
             loggedIn: false

@@ -39,6 +39,9 @@ class Details extends Component {
     }
 
     componentWillMount() {
+        // clear existing cart
+        sessionStorage.removeItem('customer-cart');
+
         let that = this;
         let dataRestaurant = null;
         let xhrRestaurant = new XMLHttpRequest();
