@@ -45,7 +45,7 @@ class Details extends Component {
         let that = this;
         let dataRestaurant = null;
         let xhrRestaurant = new XMLHttpRequest();
-        xhrRestaurant.addEventListener('readystatechange', function() {
+        xhrRestaurant.addEventListener('readystatechange', function () {
             if (this.readyState === 4) {
                 that.setState({
                     restaurantDetails: JSON.parse(this.responseText)
@@ -116,9 +116,7 @@ class Details extends Component {
     }
 
     removeMenuClick = item => event => {
-        console.log(this.state.itemAdded)
         const itemLength = this.state.itemAdded - 1
-        console.log(this.state.checkoutArr)
         if (item.count === 1) {
             let newArr = this.state.checkoutArr.filter(data => item.id !== data.id && item.category_name !== data.category_name)
             const totalPrice = this.state.totalPrice - item.price
@@ -155,7 +153,6 @@ class Details extends Component {
             newAdded = [...this.state.checkoutArr, selectedItem]
         }
 
-        console.log(newAdded)
         const itemLength = this.state.itemAdded + 1
         const totalPrice = this.state.totalPrice + item.price
         this.setState({ checkoutArr: newAdded, open: true, btnClicked: method, itemAdded: itemLength, totalPrice: totalPrice });
@@ -180,7 +177,6 @@ class Details extends Component {
             return;
         }
 
-        console.log(this.state)
         let customerCart = {
             restaurantDetails: this.state.restaurantDetails,
             cartItems: this.state.checkoutArr,
@@ -191,9 +187,7 @@ class Details extends Component {
     }
 
     render() {
-        // const restroData = this.state.restaurantDetails;
         const { photo_URL, restaurant_name, address, customer_rating, average_price, number_customers_rated } = this.state.restaurantDetails;
-        // console.log(this.state.restaurantDetails);
         return (
             <div>
                 <Header />
@@ -264,15 +258,15 @@ class Details extends Component {
                         }}
                         message={<span id="message-id">{
                             this.state.btnClicked === 'CHECKOUT' ?
-                            'Please add an item to your cart!' :
-                            this.state.btnClicked === 'LOGIN' ?
-                            'Please login first!' :
-                            this.state.btnClicked === 'ADD' ?
-                            'Item added to cart!' :
-                            this.state.btnClicked === 'INCREMENT' ?
-                            'Item quantity increased by 1!' :
-                            this.state.btnClicked === 'MINUS' ?
-                            'Item removed from cart!' : ''}</span>}
+                                'Please add an item to your cart!' :
+                                this.state.btnClicked === 'LOGIN' ?
+                                    'Please login first!' :
+                                    this.state.btnClicked === 'ADD' ?
+                                        'Item added to cart!' :
+                                        this.state.btnClicked === 'INCREMENT' ?
+                                            'Item quantity increased by 1!' :
+                                            this.state.btnClicked === 'MINUS' ?
+                                                'Item removed from cart!' : ''}</span>}
                         action={[
                             <IconButton
                                 key="close"
