@@ -372,26 +372,29 @@ class Header extends Component {
                     </div>
 
                     {/* header search box */}
-                    <div className='search-box'>
-                        <Input
-                            id='search-box-input'
-                            classes={{
-                                underline: classes.searchUnderline,
-                            }}
-                            type='text'
-                            placeholder='Search by Restaurant Name'
-                            startAdornment={
-                                <InputAdornment position='start'>
-                                    <SearchIcon id='search-box-icon' />
-                                </InputAdornment>
-                            }
-                            onChange={this.props.searchHandler}
-                        />
-                    </div>
+                    {this.props.showSearchBox ?
+                        <div className='search-box'>
+                            <Input
+                                id='search-box-input'
+                                classes={{
+                                    underline: classes.searchUnderline,
+                                }}
+                                type='text'
+                                placeholder='Search by Restaurant Name'
+                                startAdornment={
+                                    <InputAdornment position='start'>
+                                        <SearchIcon id='search-box-icon' />
+                                    </InputAdornment>
+                                }
+                                onChange={this.props.searchHandler}
+                            />
+                        </div>
+                        : ''
+                    }
 
                     {/* header app login */}
                         {!this.state.loggedIn ?
-                            <div className='app-login'>
+                            <div className={this.props.showSearchBox ? 'app-login-1' : 'app-login-2'}>
                                 <Button
                                     size='medium'
                                     variant='contained'
@@ -403,7 +406,7 @@ class Header extends Component {
                                 </Button>
                             </div>
                             :
-                            <div className='app-login'>
+                            <div className={this.props.showSearchBox ? 'app-login-1' : 'app-login-2'}>
                                 <Button
                                     id='user-btn'
                                     size='medium'

@@ -143,6 +143,7 @@ class Home extends Component {
         return (
             <div>
                 <Header
+                    showSearchBox={true}
                     searchHandler={this.searchHandler}
                 />
 
