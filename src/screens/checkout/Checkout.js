@@ -161,7 +161,6 @@ class Checkout extends Component {
             orderId: '',
             placeOrderMsg: '',
         }
-        console.log(JSON.parse(sessionStorage.getItem('customer-cart')));
     };
 
     preState = {
@@ -395,7 +394,6 @@ class Checkout extends Component {
         xhrPlaceOrder.addEventListener('readystatechange', function() {
             if (this.readyState === 4) {
                 let responseText = JSON.parse(this.responseText);
-                console.log(responseText);
                 if (responseText.status === 'ORDER SUCCESSFULLY PLACED') {
                     that.setState({
                         openPlaceOrderMsg: true,
@@ -430,8 +428,6 @@ class Checkout extends Component {
         const steps = getSteps();
         const {activeStep} = this.state;
         const {tabValue} = this.state;
-
-        console.log(this.state);
 
         return (
             <div>
