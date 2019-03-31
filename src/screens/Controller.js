@@ -32,7 +32,7 @@ class Controller extends Component {
                         ) : (
                                 <Checkout {...props} baseUrl={this.baseUrl} />
                             )
-                        )} />
+                    )} />
 
                     {/* route to profile page */}
                     <Route path='/profile' render={(props) => <Profile {...props} baseUrl={this.baseUrl} />} />

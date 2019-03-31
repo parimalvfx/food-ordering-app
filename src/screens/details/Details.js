@@ -59,7 +59,7 @@ class Details extends Component {
 
     getCategory = () => {
         let data = this.state.restaurantDetails;
-        let dataLength = data.categories && data.categories.length
+        let dataLength = data.categories && data.categories.length;
         return dataLength > 0 ?
             data.categories.map((item, index) => {
                 return <span key={index}>{item.category_name}{dataLength === index + 1 ? '' : ', '} </span>
@@ -97,14 +97,13 @@ class Details extends Component {
                     </IconButton>
                 </div>
                 <div className="width-10 checkout-grey-color"><i className='fa fa-inr'></i> {item.totalItemPrice}</div>
-
             </div>
         })
     }
 
     getCategoryList = () => {
         let data = this.state.restaurantDetails;
-        let dataLength = data.categories && data.categories.length
+        let dataLength = data.categories && data.categories.length;
         return dataLength > 0 ?
             data.categories.map((item, index) => {
                 return <div className="mt-15" key={'item' + item.id}>
@@ -116,45 +115,45 @@ class Details extends Component {
     }
 
     removeMenuClick = item => event => {
-        const itemLength = this.state.itemAdded - 1
+        const itemLength = this.state.itemAdded - 1;
         if (item.count === 1) {
             let newArr = this.state.checkoutArr.filter(data => item.id !== data.id && item.category_name !== data.category_name)
-            const totalPrice = this.state.totalPrice - item.price
-            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'MINUS', itemAdded: itemLength })
+            const totalPrice = this.state.totalPrice - item.price;
+            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'MINUS', itemAdded: itemLength });
         } else {
-            let newArr = [...this.state.checkoutArr]
+            let newArr = [...this.state.checkoutArr];
             newArr.forEach((data, index) => {
                 if (item.id === data.id && item.category_name === data.category_name) {
-                    newArr[index].count = data.count - 1
-                    newArr[index].totalItemPrice = data.totalItemPrice - data.price
+                    newArr[index].count = data.count - 1;
+                    newArr[index].totalItemPrice = data.totalItemPrice - data.price;
                 }
             })
-            const totalPrice = this.state.totalPrice - item.price
-            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'MINUS', itemAdded: itemLength })
+            const totalPrice = this.state.totalPrice - item.price;
+            this.setState({ checkoutArr: newArr, totalPrice: totalPrice, open: true, btnClicked: 'MINUS', itemAdded: itemLength });
         }
     }
 
     addMenuClick = (item, method) => event => {
-        let selectedItem, newAdded
-        let duplicates = this.state.checkoutArr.filter(data => item.id === data.id && item.category_name === data.category_name)
+        let selectedItem, newAdded;
+        let duplicates = this.state.checkoutArr.filter(data => item.id === data.id && item.category_name === data.category_name);
         if (duplicates.length > 0) {
             selectedItem = this.state.checkoutArr.map(eachItem => {
                 if (eachItem.id === duplicates[0].id && eachItem.category_name === duplicates[0].category_name) {
-                    let count = eachItem.count + 1
-                    eachItem.count = count
-                    eachItem.totalItemPrice = eachItem.price * count
+                    let count = eachItem.count + 1;
+                    eachItem.count = count;
+                    eachItem.totalItemPrice = eachItem.price * count;
                 }
-                return eachItem
+                return eachItem;
             })
-            newAdded = [...selectedItem]
+            newAdded = [...selectedItem];
         } else {
-            let count = duplicates.length + 1
-            selectedItem = { ...item, count: count, totalItemPrice: item.price * count }
-            newAdded = [...this.state.checkoutArr, selectedItem]
+            let count = duplicates.length + 1;
+            selectedItem = { ...item, count: count, totalItemPrice: item.price * count };
+            newAdded = [...this.state.checkoutArr, selectedItem];
         }
 
-        const itemLength = this.state.itemAdded + 1
-        const totalPrice = this.state.totalPrice + item.price
+        const itemLength = this.state.itemAdded + 1;
+        const totalPrice = this.state.totalPrice + item.price;
         this.setState({ checkoutArr: newAdded, open: true, btnClicked: method, itemAdded: itemLength, totalPrice: totalPrice });
     };
 
