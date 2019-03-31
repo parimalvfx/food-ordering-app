@@ -148,6 +148,7 @@ class Header extends Component {
             this.setState({ loginPasswordRequired: 'display-none' });
         }
 
+        // validate login contact no.
         let validateContact = new RegExp('[0-9]+');
         if (contactReq === false && (validateContact.test(this.state.loginContactNo) === false || this.state.loginContactNo.length !== 10)) {
             this.setState({
@@ -188,7 +189,6 @@ class Header extends Component {
                 that.closeLoginModalHandler();
             }
         });
-
         xhrLogin.open('POST', 'http://localhost:8080/api/customer/login');
         xhrLogin.setRequestHeader('authorization', 'Basic ' + window.btoa(this.state.loginContactNo + ':' + this.state.loginPassword));
         xhrLogin.setRequestHeader('Content-Type', 'application/json');
@@ -257,6 +257,7 @@ class Header extends Component {
             this.setState({ signupContactNoRequired: 'display-none' });
         }
 
+        // validate signup email
         let validateEmail = new RegExp('^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}'); // eslint-disable-line no-useless-escape
         if (emailReq === false && validateEmail.test(this.state.email) === false) {
             this.setState({
@@ -266,6 +267,7 @@ class Header extends Component {
             return;
         }
 
+        // validate signup password
         let validatePassword = new RegExp('^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#@$%&*!^-]).{8,}$');
         if (passwordReq === false && validatePassword.test(this.state.signupPassword) === false) {
             this.setState({
@@ -275,6 +277,7 @@ class Header extends Component {
             return;
         }
 
+        // validate signup contact no.
         let validateContact = new RegExp('[0-9]+');
         if (contactNoReq === false && (validateContact.test(this.state.signupContactNo) === false || this.state.signupContactNo.length !== 10)) {
             this.setState({
@@ -363,7 +366,6 @@ class Header extends Component {
         const { anchorEl } = this.state;
         return (
             <div>
-
                 <header className='app-header'>
 
                     {/* header app logo */}
@@ -393,48 +395,49 @@ class Header extends Component {
                     }
 
                     {/* header app login */}
-                        {!this.state.loggedIn ?
-                            <div className={this.props.showSearchBox ? 'app-login-1' : 'app-login-2'}>
-                                <Button
-                                    size='medium'
-                                    variant='contained'
-                                    color='default'
-                                    onClick={this.openLoginModalHandler}
-                                >
-                                    <AccountCircleIcon id='login-btn-icon' />
-                                    LOGIN
+                    {!this.state.loggedIn ?
+                        <div className={this.props.showSearchBox ? 'app-login-1' : 'app-login-2'}>
+                            <Button
+                                size='medium'
+                                variant='contained'
+                                color='default'
+                                onClick={this.openLoginModalHandler}
+                            >
+                                <AccountCircleIcon id='login-btn-icon' />
+                                LOGIN
                                 </Button>
-                            </div>
-                            :
-                            <div className={this.props.showSearchBox ? 'app-login-1' : 'app-login-2'}>
-                                <Button
-                                    id='user-btn'
-                                    size='medium'
-                                    aria-owns={anchorEl ? 'simple-menu' : undefined}
-                                    aria-haspopup='true'
-                                    onClick={this.userMenuOnClickHandler}
-                                >
-                                    <AccountCircleIcon id='user-btn-icon' />
-                                    {sessionStorage.getItem('user-first-name')}
-                                </Button>
-                                <Menu
-                                    id='user-menu'
-                                    anchorEl={anchorEl}
-                                    open={Boolean(anchorEl)}
-                                    onClose={this.userMenuOnCloseHandler}
-                                >
-                                    <MenuItem onClick={this.myProfileOnClickHandler}>
-                                        <Link to='/profile' style={{ textDecoration: 'none' }}>
-                                            My Profile
+                        </div>
+                        :
+                        <div className={this.props.showSearchBox ? 'app-login-1' : 'app-login-2'}>
+                            <Button
+                                id='user-btn'
+                                size='medium'
+                                aria-owns={anchorEl ? 'simple-menu' : undefined}
+                                aria-haspopup='true'
+                                onClick={this.userMenuOnClickHandler}
+                            >
+                                <AccountCircleIcon id='user-btn-icon' />
+                                {sessionStorage.getItem('user-first-name')}
+                            </Button>
+                            <Menu
+                                id='user-menu'
+                                anchorEl={anchorEl}
+                                open={Boolean(anchorEl)}
+                                onClose={this.userMenuOnCloseHandler}
+                            >
+                                <MenuItem onClick={this.myProfileOnClickHandler}>
+                                    <Link to='/profile' style={{ textDecoration: 'none' }}>
+                                        My Profile
                                         </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={this.logoutOnClickHandler}>Logout</MenuItem>
-                                </Menu>
-                            </div>
-                        }
+                                </MenuItem>
+                                <MenuItem onClick={this.logoutOnClickHandler}>Logout</MenuItem>
+                            </Menu>
+                        </div>
+                    }
 
                 </header>
 
+                {/* login and signup modal */}
                 <Modal
                     ariaHideApp={false}
                     isOpen={this.state.modalIsOpen}
