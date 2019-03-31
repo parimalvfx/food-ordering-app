@@ -1,3 +1,7 @@
+# Food Ordering App
+
+Food Ordering App is a web application, which is created with the basic idea to allow a customer browse restaurants and order menu items from that restaurant.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
