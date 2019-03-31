@@ -30,6 +30,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Divider from '@material-ui/core/Divider';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const styles = theme => ({
     stepperRoot: {
@@ -118,6 +119,7 @@ class Checkout extends Component {
     constructor() {
         super();
         this.state = {
+            customerCart: JSON.parse(sessionStorage.getItem('customer-cart')),
             activeStep: 0,
             tabValue: 0,
             selectedExistingAddress: '',
@@ -137,7 +139,12 @@ class Checkout extends Component {
             states: [],
             paymentModes: [],
             radioValue: '',
+            selectedPaymentMode: '',
+            openPlaceOrderMsg: false,
+            orderId: '',
+            placeOrderMsg: '',
         }
+        console.log(JSON.parse(sessionStorage.getItem('customer-cart')));
     };
 
     preState = {
@@ -336,6 +343,64 @@ class Checkout extends Component {
 
     radioChangeHandler = event => {
         this.setState({radioValue: event.target.value});
+    };
+
+    radioClickHandler = (paymentId) => {
+        this.setState({selectedPaymentMode: paymentId});
+    };
+
+    placeOrderOnClickHandler = () => {
+        let that = this;
+        let itemQuantities = this.state.customerCart.cartItems.map(
+            function(i) {
+                return {
+                    'item_id': i.id,
+                    'price': i.totalItemPrice,
+                    'quantity': i.count
+                }
+            }
+        );
+        let dataPlaceOrder = {
+            'address_id': this.state.selectedExistingAddress,
+            'bill': 0,
+            'coupon_id': '',
+            'discount': 0,
+            'item_quantities': itemQuantities,
+            'payment_id': this.state.selectedPaymentMode,
+            'restaurant_id': this.state.customerCart.restaurantDetails.id
+        }
+        let xhrPlaceOrder = new XMLHttpRequest();
+        xhrPlaceOrder.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                let responseText = JSON.parse(this.responseText);
+                console.log(responseText);
+                if (responseText.status === 'ORDER SUCCESSFULLY PLACED') {
+                    that.setState({
+                        openPlaceOrderMsg: true,
+                        orderId: responseText.id,
+                        placeOrderMsg: `Order placed successfully! Your order ID is ${responseText.id}.`
+                    });
+                } else {
+                    that.setState({
+                        openPlaceOrderMsg: true,
+                        orderId: '',
+                        placeOrderMsg: 'Unable to place your order! Please try again!'
+                    });
+                }
+            }
+        })
+        xhrPlaceOrder.open('POST', 'http://localhost:8080/api/order');
+        xhrPlaceOrder.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
+        xhrPlaceOrder.setRequestHeader('Content-Type', 'application/json');
+        xhrPlaceOrder.send(JSON.stringify(dataPlaceOrder));
+    };
+
+    placeOrderMsgOnCloseHandler = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({openPlaceOrderMsg: false});
     };
 
     render() {
@@ -541,6 +606,7 @@ class Checkout extends Component {
                                                                     value={paymentMode.payment_name.toLowerCase()}
                                                                     control={<Radio />}
                                                                     label={paymentMode.payment_name}
+                                                                    onClick={() => this.radioClickHandler(paymentMode.id)}
                                                                 />
                                                             ))}
                                                         </RadioGroup>
@@ -597,24 +663,18 @@ class Checkout extends Component {
 
                                 {/* summary - restaurant name */}
                                 <Typography variant='h6' color='textSecondary' gutterBottom>
-                                    Loud Silence
+                                    {this.state.customerCart.restaurantDetails.restaurant_name}
                                 </Typography>
 
-                                <div id='tmp1' className="flex width-100 pd-1-per">
-                                    <div className="width-10"><i className='fa fa-stop-circle-o non-veg'></i></div>
-                                    <div className="width-40 capital checkout-grey-color">Hakka Noodles</div>
-                                    <div className="width-10 checkout-grey-color">2</div>
-                                    <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
-                                    <div className="width-10 checkout-grey-color">408.00</div>
-                                </div>
-
-                                <div id='tmp2' className="flex width-100 pd-1-per">
-                                    <div className="width-10"><i className='fa fa-stop-circle-o veg'></i></div>
-                                    <div className="width-40 capital checkout-grey-color">Portuguese Salad</div>
-                                    <div className="width-10 checkout-grey-color">1</div>
-                                    <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
-                                    <div className="width-10 checkout-grey-color">245.00</div>
-                                </div>
+                                {this.state.customerCart.cartItems.map(item => (
+                                    <div key={'item' + item.id} className="flex width-100 pd-1-per">
+                                        <div className="width-10"><i className={item.item_type === 'NON_VEG' ? 'fa fa-stop-circle-o non-veg' : 'fa fa-stop-circle-o veg'}></i></div>
+                                        <div className="width-40 capital checkout-grey-color">{item.item_name}</div>
+                                        <div className="width-10 checkout-grey-color">{item.count}</div>
+                                        <div className="width-5 checkout-grey-color"><i className='fa fa-inr'></i></div>
+                                        <div className="width-10 checkout-grey-color">{item.totalItemPrice}</div>
+                                    </div>
+                                ))}
 
                                 <Divider />
 
@@ -628,20 +688,41 @@ class Checkout extends Component {
                                         <span className="width-5 checkout-grey-color">
                                             <i className='fa fa-inr'></i>
                                         </span>
-                                        653.00
+                                        {this.state.customerCart.totalPrice}
                                     </span>
                                 </div>
 
 
                                 {/* summary - place order */}
-                                <Button variant='contained' color='primary' className={classes.placeOrderButton} fullWidth={true}>
+                                <Button
+                                    variant='contained'
+                                    color='primary'
+                                    className={classes.placeOrderButton}
+                                    fullWidth={true}
+                                    onClick={this.placeOrderOnClickHandler}
+                                >
                                     Place Order
                                 </Button>
-
                             </CardContent>
                         </Card>
                     </Grid>
                 </Grid>
+
+                {/* order placed snackbar */}
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    open={this.state.openPlaceOrderMsg}
+                    autoHideDuration={5000}
+                    onClose={this.placeOrderMsgOnCloseHandler}
+                    ContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span id='message-id'>{this.state.placeOrderMsg}</span>}
+                />
+
             </div>
         );
     }
