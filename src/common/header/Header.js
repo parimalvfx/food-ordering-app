@@ -148,8 +148,8 @@ class Header extends Component {
             this.setState({ loginPasswordRequired: 'display-none' });
         }
 
-        let validateContact = new RegExp('^[0][1-9]{9}$|^[1-9]{9}');
-        if (contactReq === false && validateContact.test(this.state.loginContactNo) === false) {
+        let validateContact = new RegExp('[0-9]+');
+        if (contactReq === false && (validateContact.test(this.state.loginContactNo) === false || this.state.loginContactNo.length !== 10)) {
             this.setState({
                 loginContactNoRequired: 'display-block',
                 loginContactNoRequiredMsg: 'Invalid Contact',
@@ -257,7 +257,7 @@ class Header extends Component {
             this.setState({ signupContactNoRequired: 'display-none' });
         }
 
-        let validateEmail = new RegExp('^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}');
+        let validateEmail = new RegExp('^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,7}'); // eslint-disable-line no-useless-escape
         if (emailReq === false && validateEmail.test(this.state.email) === false) {
             this.setState({
                 emailRequired: 'display-block',
@@ -275,8 +275,8 @@ class Header extends Component {
             return;
         }
 
-        let validateContact = new RegExp('^[0][1-9]{9}$|^[1-9]{9}');
-        if (contactNoReq === false && validateContact.test(this.state.signupContactNo) === false) {
+        let validateContact = new RegExp('[0-9]+');
+        if (contactNoReq === false && (validateContact.test(this.state.signupContactNo) === false || this.state.signupContactNo.length !== 10)) {
             this.setState({
                 signupContactNoRequired: 'display-block',
                 signupContactNoRequiredMsg: 'Contact No. must contain only numbers and must be 10 digits long'
@@ -480,6 +480,7 @@ class Header extends Component {
                                         loginpassword={this.state.loginPassword}
                                         value={this.state.loginPassword}
                                         onChange={this.inputLoginPasswordChangeHandler}
+                                        autoComplete='off'
                                     />
                                     <FormHelperText className={this.state.loginPasswordRequired} error={true}>
                                         <span>{this.state.loginPasswordRequiredMsg}</span>
@@ -552,6 +553,7 @@ class Header extends Component {
                                         signuppassword={this.state.signupPassword}
                                         value={this.state.signupPassword}
                                         onChange={this.inputSignupPasswordChangeHandler}
+                                        autoComplete='off'
                                     />
                                     <FormHelperText className={this.state.signupPasswordRequired} error={true}>
                                         <span>{this.state.signupPasswordRequiredMsg}</span>
