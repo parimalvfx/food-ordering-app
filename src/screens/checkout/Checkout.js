@@ -31,6 +31,8 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = theme => ({
     stepperButton: {
@@ -707,10 +709,9 @@ class Checkout extends Component {
                                 <div className={classes.netAmount}>
                                     Net Amount
                                     <span className='right'>
-                                        <span className='width-5 checkout-grey-color mr-2'>
+                                        <span className='width-5 checkout-grey-color'>
                                             <i className='fa fa-inr'></i>
-                                        </span>
-                                        {this.state.customerCart.totalPrice}.00
+                                        </span> {this.state.customerCart.totalPrice}.00
                                     </span>
                                 </div>
 
@@ -742,6 +743,16 @@ class Checkout extends Component {
                         'aria-describedby': 'message-id',
                     }}
                     message={<span id='message-id'>{this.state.placeOrderMsg}</span>}
+                    action={[
+                        <IconButton
+                            key='close'
+                            aria-label='Close'
+                            color='inherit'
+                            onClick={this.placeOrderMsgOnCloseHandler}
+                        >
+                            <CloseIcon />
+                        </IconButton>,
+                    ]}
                 />
             </div>
         );
