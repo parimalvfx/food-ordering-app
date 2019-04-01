@@ -169,7 +169,7 @@ class Checkout extends Component {
                 });
             }
         });
-        xhrCustomerAddress.open('GET', 'http://localhost:8080/api/address/customer');
+        xhrCustomerAddress.open('GET', `${this.props.baseUrl}address/customer`);
         xhrCustomerAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
         xhrCustomerAddress.send(dataCustomerAddress);
 
@@ -183,7 +183,7 @@ class Checkout extends Component {
                 });
             }
         });
-        xhrStates.open('GET', 'http://localhost:8080/api/states');
+        xhrStates.open('GET', `${this.props.baseUrl}states`);
         xhrStates.send(dataStates);
 
         // payment modes request
@@ -196,7 +196,7 @@ class Checkout extends Component {
                 });
             }
         });
-        xhrPaymentModes.open('GET', 'http://localhost:8080/api/payment');
+        xhrPaymentModes.open('GET', `${this.props.baseUrl}payment`);
         xhrPaymentModes.send(dataPaymentModes);
     };
 
@@ -349,13 +349,13 @@ class Checkout extends Component {
                         });
                     }
                 });
-                xhrCustomerAddress.open('GET', 'http://localhost:8080/api/address/customer');
+                xhrCustomerAddress.open('GET', `${that.props.baseUrl}address/customer`);
                 xhrCustomerAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
                 xhrCustomerAddress.send(dataCustomerAddress);
                 window.alert('New address added!');
             }
         });
-        xhrNewAddress.open('POST', 'http://localhost:8080/api/address');
+        xhrNewAddress.open('POST', `${this.props.baseUrl}address`);
         xhrNewAddress.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
         xhrNewAddress.setRequestHeader('Content-Type', 'application/json');
         xhrNewAddress.send(JSON.stringify(dataNewAddress));
@@ -408,7 +408,7 @@ class Checkout extends Component {
                 }
             }
         })
-        xhrPlaceOrder.open('POST', 'http://localhost:8080/api/order');
+        xhrPlaceOrder.open('POST', `${this.props.baseUrl}order`);
         xhrPlaceOrder.setRequestHeader('authorization', 'Bearer ' + sessionStorage.getItem('access-token'));
         xhrPlaceOrder.setRequestHeader('Content-Type', 'application/json');
         xhrPlaceOrder.send(JSON.stringify(dataPlaceOrder));
