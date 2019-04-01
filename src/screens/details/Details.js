@@ -52,7 +52,7 @@ class Details extends Component {
                 });
             }
         });
-        xhrRestaurant.open('GET', 'http://localhost:8080/api/restaurant/' + this.props.match.params.id);
+        xhrRestaurant.open('GET', `${this.props.baseUrl}restaurant/${this.props.match.params.id}`);
         xhrRestaurant.setRequestHeader('Cache-Control', 'no-cache');
         xhrRestaurant.send(dataRestaurant);
     }
