@@ -80,7 +80,7 @@ class Home extends Component {
                 })
             }
         })
-        xhrRestaurants.open('GET', 'http://localhost:8080/api/restaurant');
+        xhrRestaurants.open('GET', `${this.props.baseUrl}restaurant`);
         xhrRestaurants.send(dataRestaurants);
 
         this.updateCardsGridListCols();
@@ -135,9 +135,9 @@ class Home extends Component {
             }
         })
         if (event.target.value === '') {
-            xhrRestaurants.open('GET', 'http://localhost:8080/api/restaurant');
+            xhrRestaurants.open('GET', `${this.props.baseUrl}restaurant`);
         } else {
-            xhrRestaurants.open('GET', 'http://localhost:8080/api/restaurant/name/' + event.target.value);
+            xhrRestaurants.open('GET', `${this.props.baseUrl}restaurant/name/${event.target.value}`);
         }
         xhrRestaurants.send(dataRestaurants);
     }
